@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TODO App</title>
+
+    <!-- Google Fontsの読み込み (Outfit, Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="icon" type="image/png" href="favicon.png">
+
+    <!-- スタイルシートの読み込み -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="app">
+        <!-- ヘッダーエリア：タイトルと日付 -->
+        <header>
+            <div class="header-content">
+                <h1>My Tasks</h1>
+                <button id="theme-toggle" class="theme-btn" aria-label="テーマ切り替え">🌙</button>
+
+            </div>
+            <p id="date-display"></p>
+        </header>
+
+        <main>
+            <!-- 入力エリア：グラスモーフィズムデザイン適用 -->
+            <div class="input-group glass-card">
+                <div class="input-wrapper">
+                    <input type="text" id="todo-input" placeholder="新しいタスクを追加..." autocomplete="off">
+                    <select id="todo-priority" aria-label="優先度">
+                        <option value="none">優先度: なし</option>
+                        <option value="high">High 🔥</option>
+                        <option value="medium">Medium ⚠️</option>
+                        <option value="low">Low ☕</option>
+                    </select>
+                    <input type="datetime-local" id="todo-date" aria-label="リマインド日時">
+                </div>
+                <button id="add-btn" aria-label="タスクを追加">
+                    <!-- プラスアイコン (SVG) -->
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- フィルタリング & 検索エリア -->
+            <div class="filter-section glass-card">
+                <input type="text" id="search-input" placeholder="タスクを検索..." autocomplete="off">
+                <div class="filter-groups">
+                    <div class="filter-group">
+                        <label>Status:</label>
+                        <div class="filter-buttons" id="filter-status">
+                            <button class="filter-btn active" data-filter="all">All</button>
+                            <button class="filter-btn" data-filter="active">Active</button>
+                            <button class="filter-btn" data-filter="completed">Done</button>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <label>Priority:</label>
+                        <div class="filter-buttons" id="filter-priority">
+                            <button class="filter-btn active" data-filter="all">All</button>
+                            <button class="filter-btn" data-filter="high">High</button>
+                            <button class="filter-btn" data-filter="medium">Mid</button>
+                            <button class="filter-btn" data-filter="low">Low</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TODOリスト表示エリア -->
+            <div class="todo-list-container glass-card">
+                <ul id="todo-list">
+                    <!-- ここにJavaScriptでリストアイテム(li)が動的に追加されます -->
+                </ul>
+                <!-- タスクが0件の時の表示 -->
+                <div id="empty-state" class="hidden">
+                    <p>タスクはありません 🎉</p>
+                </div>
+            </div>
+
+            <!-- フッターコントロールエリア -->
+            <div class="controls glass-card">
+                <!-- 未完了件数表示 -->
+                <span><span id="active-count">0</span> 件の未完了タスク</span>
+                <div class="control-buttons">
+                    <button id="sort-priority-btn" class="text-btn">優先度順</button>
+                    <!-- 完了済み一括削除ボタン -->
+                    <button id="clear-completed-btn" class="text-btn">完了済みを削除</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="miyabi-overlay" class="hidden">
+        <img src="miyabi.png" alt="Miyabi">
+    </div>
+
+
+
+    <!-- メインロジックの読み込み -->
+    <script type="module" src="app.js"></script>
+</body>
+
+</html>
