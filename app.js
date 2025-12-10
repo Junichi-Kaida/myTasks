@@ -92,35 +92,35 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
         const newTheme = currentTheme === 'light' ? 'dark' : 'light';
 
-        // ダークモードへの変更時のみエフェクトを発動
-        if (newTheme === 'dark') {
-            const overlay = document.getElementById('miyabi-overlay');
-            if (overlay) {
-                // 1. オーバーレイ表示
-                overlay.classList.remove('hidden');
-                // 少しだけ待機してフェードインさせる
-                requestAnimationFrame(() => {
-                    overlay.classList.add('show');
-                });
+        // テーマ変更時のエフェクト処理
+        const overlayId = newTheme === 'dark' ? 'miyabi-overlay' : 'akira-overlay';
+        const overlay = document.getElementById(overlayId);
 
-                // 2. 画像が表示された状態でテーマ変更 (タイミング待ち: 1000ms)
+        if (overlay) {
+            // 1. オーバーレイ表示
+            overlay.classList.remove('hidden');
+            // 少しだけ待機してフェードインさせる
+            requestAnimationFrame(() => {
+                overlay.classList.add('show');
+            });
+
+            // 2. 画像が表示された状態でテーマ変更 (タイミング待ち: 1000ms)
+            setTimeout(() => {
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                updateThemeIcon(newTheme);
+            }, 1000);
+
+            // 3. フェードアウト (タイミング: 2500ms後)
+            setTimeout(() => {
+                overlay.classList.remove('show');
+                // CSS transition (0.5s) が終わったら隠す
                 setTimeout(() => {
-                    document.documentElement.setAttribute('data-theme', newTheme);
-                    localStorage.setItem('theme', newTheme);
-                    updateThemeIcon(newTheme);
-                }, 1000);
+                    overlay.classList.add('hidden');
+                }, 500);
+            }, 2500);
 
-                // 3. フェードアウト (タイミング: 2500ms後)
-                setTimeout(() => {
-                    overlay.classList.remove('show');
-                    // CSS transition (0.5s) が終わったら隠す
-                    setTimeout(() => {
-                        overlay.classList.add('hidden');
-                    }, 500);
-                }, 2500);
-
-                return;
-            }
+            return;
         }
 
         document.documentElement.setAttribute('data-theme', newTheme);
