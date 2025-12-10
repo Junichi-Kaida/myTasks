@@ -41,6 +41,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentStatusFilter = 'all'; // all, active, completed
     let currentPriorityFilter = 'all'; // all, high, medium, low
 
+    // ソート状態
+    let currentSort = { type: 'none', order: 'asc' }; // type: 'none' | 'priority' | 'date', order: 'asc' | 'desc'
+
     // トーストコンテナの生成（なければ作成）
     let toastContainer = document.getElementById('toast-container');
     if (!toastContainer) {
@@ -311,7 +314,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         clearCompletedBtn.addEventListener('click', clearCompleted);
         if (sortPriorityBtn) {
-            sortPriorityBtn.addEventListener('click', sortTodosByPriority);
+            sortPriorityBtn.addEventListener('click', () => handleSort('priority'));
+        }
+
+        const sortDateBtn = document.getElementById('sort-date-btn');
+        if (sortDateBtn) {
+            sortDateBtn.addEventListener('click', () => handleSort('date'));
         }
 
         if (themeToggleBtn) {
@@ -476,32 +484,96 @@ document.addEventListener('DOMContentLoaded', () => {
      * 同じ優先度内では、リストへの追加順（ID順）を維持します。
      * 完了済みタスクは常にリストの末尾に配置されるため、ここでは主に未完了タスクの順序に影響します。
      */
+    /**
+     * ソート処理のハンドラー
+     */
+    function handleSort(type) {
+        // 同じタイプなら順序を反転、違うタイプなら降順からスタート
+        if (currentSort.type === type) {
+            currentSort.order = currentSort.order === 'asc' ? 'desc' : 'asc';
+        } else {
+            currentSort.type = type;
+            currentSort.order = 'desc'; // デフォルトは降順（高い/新しい順）
+        }
+
+        if (type === 'priority') {
+            sortTodosByPriority();
+        } else if (type === 'date') {
+            sortTodosByDate();
+        }
+
+        updateSortButtons();
+    }
+
     function sortTodosByPriority() {
         const priorityScore = { 'high': 3, 'medium': 2, 'low': 1, 'none': 0 };
+        const order = currentSort.order === 'asc' ? 1 : -1;
 
         todos.sort((a, b) => {
-            // 完了状態による分離（未完了が常に先）
-            if (a.completed !== b.completed) {
-                return a.completed ? 1 : -1;
-            }
-
-            // 未完了タスク同士の比較
+            if (a.completed !== b.completed) return a.completed ? 1 : -1;
             if (!a.completed) {
                 const scoreA = priorityScore[a.priority || 'none'] || 0;
                 const scoreB = priorityScore[b.priority || 'none'] || 0;
-
-                // スコアが高い順（降順）
                 if (scoreA !== scoreB) {
-                    return scoreB - scoreA;
+                    return (scoreA - scoreB) * order; // 昇順なら低い順、降順なら高い順
                 }
-
-                // 同じ優先度の場合はIDで比較（古いものが上 = 作成順）
                 return a.id - b.id;
             }
-            return 0; // 完了済みタスクの順序は変更しない
+            return 0;
         });
 
         saveTodos();
+    }
+
+    function sortTodosByDate() {
+        const order = currentSort.order === 'asc' ? 1 : -1;
+
+        todos.sort((a, b) => {
+            if (a.completed !== b.completed) return a.completed ? 1 : -1;
+            if (!a.completed) {
+                // 日付がないものは最後にする（または最初にする）
+                // ここでは日付ありを優先し、日付なし同士はID順
+                const dateA = a.reminder ? new Date(a.reminder).getTime() : (order === 1 ? Infinity : -Infinity);
+                const dateB = b.reminder ? new Date(b.reminder).getTime() : (order === 1 ? Infinity : -Infinity);
+
+                if (dateA !== dateB) {
+                    return (dateA - dateB) * order;
+                }
+                return a.id - b.id;
+            }
+            return 0;
+        });
+
+        saveTodos();
+    }
+
+    function updateSortButtons() {
+        if (sortPriorityBtn) {
+            let label = '優先度順';
+            if (currentSort.type === 'priority') {
+                label += currentSort.order === 'asc' ? ' ↑' : ' ↓';
+                sortPriorityBtn.style.color = 'var(--primary)';
+                sortPriorityBtn.style.fontWeight = '700';
+            } else {
+                sortPriorityBtn.style.color = '';
+                sortPriorityBtn.style.fontWeight = '';
+            }
+            sortPriorityBtn.textContent = label;
+        }
+
+        const sortDateBtn = document.getElementById('sort-date-btn');
+        if (sortDateBtn) {
+            let label = '日付順';
+            if (currentSort.type === 'date') {
+                label += currentSort.order === 'asc' ? ' ↑' : ' ↓';
+                sortDateBtn.style.color = 'var(--primary)';
+                sortDateBtn.style.fontWeight = '700';
+            } else {
+                sortDateBtn.style.color = '';
+                sortDateBtn.style.fontWeight = '';
+            }
+            sortDateBtn.textContent = label;
+        }
     }
 
     function updateTodoText(id, newText) {
