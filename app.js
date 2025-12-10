@@ -745,10 +745,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     <input type="checkbox" ${todo.completed ? 'checked' : ''}>
                     <div class="checkbox-custom"></div>
                 </div>
-                <div class="todo-text">
-                    <span>${escapeHtml(todo.text)}</span>
-                    <span class="priority-badge priority-${todo.priority || 'none'}" title="優先度を変更">${getPriorityLabel(todo.priority)}</span>
-                    ${reminderHtml}
+                <div class="todo-content">
+                    <div class="todo-title">
+                        <span>${escapeHtml(todo.text)}</span>
+                    </div>
+                    <div class="todo-meta">
+                        <span class="priority-badge priority-${todo.priority || 'none'}" title="優先度を変更">${getPriorityLabel(todo.priority)}</span>
+                        ${reminderHtml}
+                    </div>
                 </div>
                 <button class="delete-btn" aria-label="削除">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -766,7 +770,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 badge.addEventListener('click', (e) => toggleReminderEdit(e, todo.id, todo.reminder));
             }
 
-            const textSpan = li.querySelector('.todo-text span');
+            const textSpan = li.querySelector('.todo-title span');
             if (textSpan) {
                 textSpan.addEventListener('click', (e) => {
                     e.stopPropagation();
