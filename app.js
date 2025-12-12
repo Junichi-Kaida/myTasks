@@ -46,6 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 集中モード状態
     let focusedTodoId = null; // null または task ID
+    let focusStartTime = null; // 集中開始時刻
+    let focusTimerInterval = null; // タイマー用Interval ID
 
     // トーストコンテナの生成（なければ作成）
     let toastContainer = document.getElementById('toast-container');
@@ -847,6 +849,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
             }
 
+            const isFocused = todo.id === focusedTodoId;
+
+            // 集中時間の表示用HTML
+            let focusTimeHtml = '';
+            const totalSeconds = todo.focusTime || 0;
+            if (totalSeconds > 0 || isFocused) {
+                const timeStr = formatTime(totalSeconds);
+                // 集中モード中はIDを付与してJSで更新できるようにする
+                const idAttr = isFocused ? 'id="focus-timer-display"' : '';
+                focusTimeHtml = `<span class="focus-time" title="集中時間"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:2px"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg><span ${idAttr}>${timeStr}</span></span>`;
+            }
+
             li.innerHTML = `
                 <div class="checkbox-wrapper">
                     <input type="checkbox" ${todo.completed ? 'checked' : ''}>
@@ -857,19 +871,20 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span>${escapeHtml(todo.text)}</span>
                     </div>
                     <div class="todo-meta">
+                        ${focusTimeHtml}
                         ${reminderHtml}
                         ${priorityHtml}
                         <!-- 集中ボタン -->
-                        <button class="focus-btn" aria-label="集中モード" onclick="toggleFocusMode(${todo.id})">
+                        <button class="focus-btn" aria-label="集中モード" onclick="event.stopPropagation(); toggleFocusMode(${todo.id})">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>
                         </button>
                         <!-- 削除ボタン -->
-                        <button class="delete-btn" aria-label="削除" onclick="deleteTodo(${todo.id})">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="3 6 5 6 21 6"></polyline>
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2-2h4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                        </svg>
-                    </button>
+                        <button class="delete-btn" aria-label="削除">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2-2h4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                        </button>
                     </div>
                 </div>
             `;
@@ -1038,34 +1053,68 @@ document.addEventListener('DOMContentLoaded', () => {
      * @param {number} id - タスクID
      */
     window.toggleFocusMode = function (id) {
-        // 同じタスクをクリックした場合は解除
         if (focusedTodoId === id) {
             exitFocusMode();
             return;
         }
-
         const todo = todos.find(t => t.id === id);
         if (!todo) return;
 
         focusedTodoId = id;
-        document.body.classList.add('focus-active');
+        focusStartTime = Date.now(); // 計測開始
 
+        document.body.classList.add('focus-active');
         const overlay = document.getElementById('focus-overlay');
         if (overlay) overlay.classList.add('active');
 
         renderTodos();
+
+        // リアルタイム更新用タイマー
+        if (focusTimerInterval) clearInterval(focusTimerInterval);
+        focusTimerInterval = setInterval(() => {
+            const timerDisplay = document.getElementById('focus-timer-display');
+            if (timerDisplay && focusStartTime) {
+                const elapsedSec = Math.floor((Date.now() - focusStartTime) / 1000);
+                const currentTotal = (todo.focusTime || 0) + elapsedSec;
+                timerDisplay.textContent = formatTime(currentTotal);
+            }
+        }, 1000);
     };
 
-    /**
-     * 集中モードを終了する
-     */
     function exitFocusMode() {
+        // タイマー停止と保存
+        if (focusedTodoId !== null && focusStartTime) {
+            const elapsedSec = Math.floor((Date.now() - focusStartTime) / 1000);
+            const todo = todos.find(t => t.id === focusedTodoId);
+            if (todo) {
+                todo.focusTime = (todo.focusTime || 0) + elapsedSec;
+                saveTodos();
+            }
+        }
+
+        if (focusTimerInterval) {
+            clearInterval(focusTimerInterval);
+            focusTimerInterval = null;
+        }
+        focusStartTime = null;
+
         focusedTodoId = null;
         document.body.classList.remove('focus-active');
-
         const overlay = document.getElementById('focus-overlay');
         if (overlay) overlay.classList.remove('active');
-
         renderTodos();
+    }
+
+    // 秒数を mm:ss 形式などに変換するヘルパー
+    function formatTime(seconds) {
+        if (!seconds) return '0:00';
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = seconds % 60;
+
+        if (h > 0) {
+            return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+        return `${m}:${s.toString().padStart(2, '0')}`;
     }
 });

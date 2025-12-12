@@ -200,6 +200,28 @@ body.focus-active .todo-item.focused .todo-title {
     z-index: 10;
 }
 
+/* 集中時間の表示 */
+.focus-time {
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-right: 12px;
+    background: rgba(99, 102, 241, 0.1);
+    padding: 2px 8px;
+    border-radius: 12px;
+    color: var(--primary);
+}
+
+.todo-item.focused .focus-time {
+    font-size: 1.2rem;
+    /* 集中モード中は大きく */
+    background: transparent;
+    margin-right: auto;
+    /* 左側に寄せるなどがここでの調整 */
+    padding-left: 0;
+}
+
 @keyframes fadeInTooltip {
     to {
         opacity: 1;
