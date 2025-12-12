@@ -24,7 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const sortPriorityBtn = document.getElementById('sort-priority-btn');
     const themeToggleBtn = document.getElementById('theme-toggle');
     const dateDisplay = document.getElementById('date-display');
-
+    const exportCsvBtn = document.getElementById('export-csv-btn');
+    const importCsvBtn = document.getElementById('import-csv-btn');
+    const csvFileInput = document.getElementById('csv-file-input');
     // フィルタ・検索用要素
     const searchInput = document.getElementById('search-input');
     const filterStatusBtns = document.querySelectorAll('#filter-status .filter-btn');
@@ -346,6 +348,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (themeToggleBtn) {
             themeToggleBtn.addEventListener('click', toggleTheme);
+        }
+
+        // CSV Export/Import
+        if (exportCsvBtn) {
+            exportCsvBtn.addEventListener('click', exportTodos);
+        }
+        if (importCsvBtn && csvFileInput) {
+            importCsvBtn.addEventListener('click', () => csvFileInput.click());
+            csvFileInput.addEventListener('change', importTodos);
         }
 
         // フィルタリング & 検索イベント
@@ -1116,5 +1127,139 @@ document.addEventListener('DOMContentLoaded', () => {
             return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
         }
         return `${m}:${s.toString().padStart(2, '0')}`;
+    }
+    // -------------------------------------------------------------------------
+    // CSV Export / Import Logic
+    // -------------------------------------------------------------------------
+
+    function exportTodos() {
+        if (!todos || todos.length === 0) {
+            alert("エクスポートするタスクがありません。");
+            return;
+        }
+
+        // CSVヘッダー
+        const headers = ["id", "text", "priority", "completed", "reminder", "notified", "focusTime"];
+
+        // データ行の作成
+        const rows = todos.map(todo => {
+            return headers.map(header => {
+                let val = todo[header] !== undefined ? todo[header] : "";
+
+                // エスケープ処理: ダブルクォートがある場合は2つに置換し、全体をダブルクォートで囲む
+                const str = String(val);
+                if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+                    return `"${str.replace(/"/g, '""')}"`;
+                }
+                return str;
+            }).join(',');
+        });
+
+        // BOM付きUTF-8にする（Excel文字化け対策）
+        const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+        const csvContent = headers.join(',') + '\n' + rows.join('\n');
+        const blob = new Blob([bom, csvContent], { type: 'text/csv;charset=utf-8;' });
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+
+        const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+        link.setAttribute("download", `mytasks_${dateStr}.csv`);
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function importTodos(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const content = e.target.result;
+            try {
+                const parsedTodos = parseCSV(content);
+                if (parsedTodos.length > 0) {
+                    // 既存のタスクに追加（IDは衝突回避のため再生成）
+                    parsedTodos.forEach(todo => {
+                        // 最小限のバリデーション
+                        if (todo.text) {
+                            todos.push({
+                                id: Date.now() + Math.random(), // ユニークID確保
+                                text: todo.text,
+                                priority: todo.priority || 'none',
+                                completed: todo.completed === 'true',
+                                reminder: (todo.reminder && todo.reminder !== 'null' && todo.reminder !== 'undefined') ? todo.reminder : null,
+                                notified: false, // 通知済みステータスはリセット
+                                focusTime: parseInt(todo.focusTime || 0)
+                            });
+                        }
+                    });
+
+                    saveTodos();
+                    alert(`${parsedTodos.length}件のタスクをインポートしました。`);
+                } else {
+                    alert("インポートできるタスクが見つかりませんでした。");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("CSVの読み込みに失敗しました。フォーマットを確認してください。");
+            }
+            // inputをリセットして同じファイルを再度選べるようにする
+            event.target.value = '';
+        };
+        reader.readAsText(file);
+    }
+
+    function parseCSV(content) {
+        const lines = content.split(/\r?\n/).filter(line => line.trim() !== '');
+        if (lines.length < 2) return [];
+
+        const headers = lines[0].split(',').map(h => h.trim());
+        const result = [];
+
+        // 簡易的なCSVパーサー（ダブルクォート内のカンマ対応などは簡易実装）
+        // ※本当はステートマシンで書くべきだが、今回はexportの形式（ダブルクォート囲み）に合わせる
+
+        for (let i = 1; i < lines.length; i++) {
+            const line = lines[i];
+            const obj = {};
+            let currentVal = '';
+            let isQuoted = false;
+            let colIndex = 0;
+
+            for (let j = 0; j < line.length; j++) {
+                const char = line[j];
+
+                if (char === '"') {
+                    if (isQuoted && line[j + 1] === '"') {
+                        // エスケープされたダブルクォート
+                        currentVal += '"';
+                        j++;
+                    } else {
+                        isQuoted = !isQuoted;
+                    }
+                } else if (char === ',' && !isQuoted) {
+                    // カンマ区切り
+                    if (colIndex < headers.length) {
+                        obj[headers[colIndex]] = currentVal;
+                    }
+                    colIndex++;
+                    currentVal = '';
+                } else {
+                    currentVal += char;
+                }
+            }
+            // 最後のカラム
+            if (colIndex < headers.length) {
+                obj[headers[colIndex]] = currentVal;
+            }
+
+            result.push(obj);
+        }
+
+        return result;
     }
 });
