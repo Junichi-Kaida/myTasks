@@ -17,6 +17,7 @@
 
     <!-- スタイルシートの読み込み -->
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="focus-mode.css">
 </head>
 
 <body>
@@ -107,6 +108,11 @@
 
     <div id="akira-overlay" class="hidden">
         <img src="akira.png" alt="Akira">
+    </div>
+
+    <!-- 集中モードオーバーレイ -->
+    <div id="focus-overlay">
+        <div class="focus-exit-hint">ESCで集中モードを終了</div>
     </div>
 
     <!-- メインロジックの読み込み -->

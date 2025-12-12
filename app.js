@@ -44,6 +44,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // ソート状態
     let currentSort = { type: 'none', order: 'asc' }; // type: 'none' | 'priority' | 'date', order: 'asc' | 'desc'
 
+    // 集中モード状態
+    let focusedTodoId = null; // null または task ID
+
     // トーストコンテナの生成（なければ作成）
     let toastContainer = document.getElementById('toast-container');
     if (!toastContainer) {
@@ -300,6 +303,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // -------------------------------------------------------------------------
 
     function setupEventListeners() {
+        // 集中モードオーバーレイのクリックイベント
+        // 背景クリックでの解除は無効化（ユーザー要望）
+        /* 
+        const focusOverlay = document.getElementById('focus-overlay');
+        if (focusOverlay) {
+            focusOverlay.addEventListener('click', (e) => {
+                if (e.target === focusOverlay || e.target.classList.contains('focus-exit-hint')) {
+                    exitFocusMode();
+                }
+            });
+        }
+        */
+
+        // ESCキーで集中モード解除
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && focusedTodoId !== null) {
+                exitFocusMode();
+            }
+        });
+
         addBtn.addEventListener('click', () => checkPermissionAndAdd());
 
         todoInput.addEventListener('keydown', (e) => {
@@ -437,6 +460,16 @@ document.addEventListener('DOMContentLoaded', () => {
             todo.id === id ? { ...todo, completed: !todo.completed } : todo
         );
         saveTodos();
+
+        // 集中モード中にそのタスクを完了（クローズ）した場合、集中モードを終了
+        if (focusedTodoId === id) {
+            const todo = todos.find(t => t.id === id);
+            if (todo && todo.completed) {
+                // 少し余韻を残してから解除するか、即時解除か。要望は「切ってほしい」なので即時でOKだが
+                // アニメーションのために少し待つのも良い。今回はUX的に即時反応させる。
+                setTimeout(() => exitFocusMode(), 300); // チェックボックスのアニメーションを待つ
+            }
+        }
     }
 
     function deleteTodo(id) {
@@ -788,8 +821,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         sortedTodos.forEach(todo => {
             const li = document.createElement('li');
-            li.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+            li.className = `todo-item ${todo.completed ? 'completed' : ''} ${todo.id === focusedTodoId ? 'focused' : ''}`;
             li.dataset.id = todo.id;
+
+            // 集中モード中は対象以外を描画しない（もしくはCSSで隠すが、DOMに残す方がアニメーションしやすい）
+            // CSSで .todo-item { display: none } にして .focused だけ表示するアプローチを採用済み
+
+            const priorityHtml = `<span class="priority-badge priority-${todo.priority || 'none'}" title="優先度を変更">${getPriorityLabel(todo.priority)}</span>`;
 
             let reminderHtml = '';
             if (todo.reminder) {
@@ -822,16 +860,21 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span>${escapeHtml(todo.text)}</span>
                     </div>
                     <div class="todo-meta">
-                        <span class="priority-badge priority-${todo.priority || 'none'}" title="優先度を変更">${getPriorityLabel(todo.priority)}</span>
                         ${reminderHtml}
+                        ${priorityHtml}
+                        <!-- 集中ボタン -->
+                        <button class="focus-btn" aria-label="集中モード" onclick="toggleFocusMode(${todo.id})">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>
+                        </button>
+                        <!-- 削除ボタン -->
+                        <button class="delete-btn" aria-label="削除" onclick="deleteTodo(${todo.id})">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2-2h4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                    </button>
                     </div>
                 </div>
-                <button class="delete-btn" aria-label="削除">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="3 6 5 6 21 6"></polyline>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2-2h4a2 2 0 0 1 2-2h4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                    </svg>
-                </button>
             `;
 
             const checkbox = li.querySelector('.checkbox-wrapper');
@@ -988,5 +1031,44 @@ document.addEventListener('DOMContentLoaded', () => {
         const dates = `${startDateTime}/${endDateTime}`;
 
         return `https://www.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${dates}`;
+    }
+    // -------------------------------------------------------------------------
+    // 集中モード (Focus Mode) ロジック
+    // -------------------------------------------------------------------------
+
+    /**
+     * 集中モードの切り替え
+     * @param {number} id - タスクID
+     */
+    window.toggleFocusMode = function (id) {
+        // 同じタスクをクリックした場合は解除
+        if (focusedTodoId === id) {
+            exitFocusMode();
+            return;
+        }
+
+        const todo = todos.find(t => t.id === id);
+        if (!todo) return;
+
+        focusedTodoId = id;
+        document.body.classList.add('focus-active');
+
+        const overlay = document.getElementById('focus-overlay');
+        if (overlay) overlay.classList.add('active');
+
+        renderTodos();
+    };
+
+    /**
+     * 集中モードを終了する
+     */
+    function exitFocusMode() {
+        focusedTodoId = null;
+        document.body.classList.remove('focus-active');
+
+        const overlay = document.getElementById('focus-overlay');
+        if (overlay) overlay.classList.remove('active');
+
+        renderTodos();
     }
 });
