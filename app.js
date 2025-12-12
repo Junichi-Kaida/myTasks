@@ -174,9 +174,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (stateChanged) {
                 saveTodos();
-            } else if (!isEditing) {
-                // 編集中でなければ再描画（期限切れ表示更新のため）
-                renderTodos();
             }
         }, 5000);
     }
