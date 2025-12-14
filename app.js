@@ -979,21 +979,32 @@ document.addEventListener('DOMContentLoaded', () => {
         emptyState.classList.add('hidden');
 
         // D&D実装のため、未完了タスクはユーザー定義順（配列順）を維持し、完了タスクのみ末尾に移動するロジックに変更
-        const activeTodoItems = [];
+        // さらに、期限切れタスクを未完了タスクの中で最優先（トップ）に表示し、日付順でソートする
+
+        const expiredTodos = [];
+        const activeTodoItems = []; // 期限切れ以外の未完了
         const completedTodos = [];
 
         filteredTodos.forEach(todo => {
             if (todo.completed) {
                 completedTodos.push(todo);
+            } else if (todo.reminder && isExpired(todo.reminder)) {
+                expiredTodos.push(todo);
             } else {
                 activeTodoItems.push(todo);
             }
         });
 
-        // 完了済みはID順などでソートしておく（任意）
+        // 期限切れタスクは古い順（緊急度が高い順）にソート
+        expiredTodos.sort((a, b) => {
+            return new Date(a.reminder).getTime() - new Date(b.reminder).getTime();
+        });
+
+        // 完了済みはID順などでソート
         completedTodos.sort((a, b) => b.id - a.id);
 
-        const sortedTodos = [...activeTodoItems, ...completedTodos];
+        // 結合: 期限切れ -> 通常(未完了) -> 完了済み
+        const sortedTodos = [...expiredTodos, ...activeTodoItems, ...completedTodos];
 
         sortedTodos.forEach(todo => {
             const li = document.createElement('li');
