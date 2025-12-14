@@ -3,12 +3,12 @@
        変数定義 (Color & Design Tokens)
        ========================================= */
     /* メインカラー */
-    --primary: #6366f1;
-    /* プライマリーカラー (Indigo) */
-    --primary-hover: #4f46e5;
+    --primary: #0ea5e9;
+    /* プライマリーカラー (Sky Blue) */
+    --primary-hover: #0284c7;
     /* ホバー時の濃い色 */
-    --secondary: #ec4899;
-    /* アクセントカラー (Pink) */
+    --secondary: #22d3ee;
+    /* アクセントカラー (Cyan) */
 
     /* 背景色設定 */
     --background-start: #f3f4f6;
@@ -85,7 +85,7 @@
 body {
     font-family: var(--font-body);
     /* 動的なグラデーション背景 */
-    background: linear-gradient(135deg, #a78bfa, #f472b6, #38bdf8);
+    background: linear-gradient(135deg, #38bdf8, #818cf8, #22d3ee);
     background-size: 200% 200%;
     animation: gradientBG 15s ease infinite;
     /* ゆっくり色が変化するアニメーション */
