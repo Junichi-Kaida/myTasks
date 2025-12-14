@@ -37,12 +37,20 @@
             <div class="input-group glass-card">
                 <div class="input-wrapper">
                     <input type="text" id="todo-input" placeholder="新しいタスクを追加..." autocomplete="off">
-                    <select id="todo-priority" aria-label="優先度">
-                        <option value="none">優先度: なし</option>
-                        <option value="high">High 🔥</option>
-                        <option value="medium">Medium ⚠️</option>
-                        <option value="low">Low ☕</option>
-                    </select>
+                    <div class="priority-input-container">
+                        <select id="todo-priority" aria-label="優先度">
+                            <option value="none">優先度: なし</option>
+                            <option value="high">High 🔥</option>
+                            <option value="medium">Medium ⚠️</option>
+                            <option value="low">Low ☕</option>
+                        </select>
+                        <div class="quick-priority-buttons">
+                            <button type="button" class="quick-priority-btn" data-priority="high">High</button>
+                            <button type="button" class="quick-priority-btn" data-priority="medium">Mid</button>
+                            <button type="button" class="quick-priority-btn" data-priority="low">Low</button>
+                            <button type="button" class="quick-priority-btn" data-priority="none">なし</button>
+                        </div>
+                    </div>
                     <div class="date-input-container">
                         <input type="datetime-local" id="todo-date" aria-label="リマインド日時">
                         <div class="quick-date-buttons">

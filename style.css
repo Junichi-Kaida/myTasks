@@ -776,6 +776,9 @@ header h1 {
     outline: none;
     cursor: pointer;
     font-family: var(--font-body);
+    width: auto;
+    /* コンパクトにする */
+    min-width: 120px;
 }
 
 /* ダークモード時の優先度セレクトボックス調整 */
@@ -986,4 +989,45 @@ header h1 {
     margin-left: 4px;
     margin-top: -4px;
     opacity: 0.8;
+}
+
+/* Priority Input improvements */
+.priority-input-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.quick-priority-buttons {
+    display: flex;
+    gap: 4px;
+}
+
+.quick-priority-btn {
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: var(--font-body);
+}
+
+.quick-priority-btn:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    transform: translateY(-1px);
+}
+
+.quick-priority-btn:active {
+    transform: scale(0.95);
+}
+
+[data-theme="dark"] .quick-priority-btn {
+    background: rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.1);
 }

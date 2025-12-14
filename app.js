@@ -441,6 +441,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         });
+
+        // クイック優先度ボタン
+        document.querySelectorAll('.quick-priority-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const priority = e.target.dataset.priority;
+                if (todoPriority) {
+                    todoPriority.value = priority;
+
+                    // フィードバックアニメーション
+                    todoPriority.style.backgroundColor = 'var(--primary-hover)';
+                    todoPriority.style.color = 'white';
+                    setTimeout(() => {
+                        todoPriority.style.backgroundColor = '';
+                        todoPriority.style.color = '';
+                    }, 300);
+                }
+            });
+        });
     }
 
 
