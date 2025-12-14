@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // -------------------------------------------------------------------------
     const todoInput = document.getElementById('todo-input');
     const todoPriority = document.getElementById('todo-priority');
+    const todoRepeat = document.getElementById('todo-repeat');
     const todoDate = document.getElementById('todo-date');
     const addBtn = document.getElementById('add-btn');
     const todoList = document.getElementById('todo-list');
@@ -459,6 +460,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         });
+
+        // クイック繰り返しボタン
+        document.querySelectorAll('.quick-repeat-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const repeat = e.target.dataset.repeat;
+                if (todoRepeat) {
+                    todoRepeat.value = repeat;
+
+                    // フィードバックアニメーション
+                    todoRepeat.style.backgroundColor = 'var(--primary-hover)';
+                    todoRepeat.style.color = 'white';
+                    setTimeout(() => {
+                        todoRepeat.style.backgroundColor = '';
+                        todoRepeat.style.color = '';
+                    }, 300);
+                }
+            });
+        });
     }
 
 
@@ -509,6 +528,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function addTodo() {
         const text = todoInput.value.trim();
         const priority = todoPriority ? todoPriority.value : 'none';
+        const repeat = todoRepeat ? todoRepeat.value : 'none';
         const date = todoDate ? todoDate.value : null;
 
         if (!text) return;
@@ -517,6 +537,7 @@ document.addEventListener('DOMContentLoaded', () => {
             id: Date.now(), // 一意のIDとしてタイムスタンプを使用
             text,
             priority,
+            repeat,
             completed: false,
             reminder: date || null,
             notified: false
@@ -529,6 +550,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // フォームのリセット
             todoInput.value = '';
             if (todoPriority) todoPriority.value = 'none';
+            if (todoRepeat) todoRepeat.value = 'none';
+            if (todoDate) todoDate.value = '';
             if (todoDate) todoDate.value = '';
             todoInput.focus();
         } catch (e) {
@@ -538,6 +561,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function toggleTodo(id) {
+        // 完了状態を切り替える前に、対象のタスクを取得
+        const targetTodo = todos.find(t => t.id === id);
+
+        // もし未完了から完了へ切り替わる場合、かつ繰り返し設定がある場合
+        // 次のタスクを作成する
+        if (targetTodo && !targetTodo.completed && targetTodo.repeat && targetTodo.repeat !== 'none') {
+            createNextRecurringTask(targetTodo);
+            // 元のタスクは「繰り返しなし」にして完了状態にする（これ以上の増殖を防ぐため）
+            // ただし、要望によっては「親タスク」として扱いたい場合もあるが、
+            // シンプルに「完了済み履歴」として残し、新しいタスクを「次の予定」とするのが一般的。
+            // ここでは元のタスクのrepeat属性を残しておくと、誤って未完了に戻したときに挙動が複雑になるため
+            // 一旦そのままでも良いが、ロジックをシンプルにするため、新しいタスクを生成する。
+        }
+
         todos = todos.map(todo =>
             todo.id === id ? { ...todo, completed: !todo.completed } : todo
         );
@@ -552,6 +589,63 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => exitFocusMode(), 300); // チェックボックスのアニメーションを待つ
             }
         }
+    }
+
+    /**
+     * 繰り返しタスクの次回分を作成する
+     */
+    function createNextRecurringTask(originalTodo) {
+        // 次の日付を計算
+        let nextDate = null;
+        if (originalTodo.reminder) {
+            const current = new Date(originalTodo.reminder);
+            // 壊れた日付データでないか確認
+            if (!isNaN(current.getTime())) {
+                if (originalTodo.repeat === 'daily') {
+                    current.setDate(current.getDate() + 1);
+                } else if (originalTodo.repeat === 'weekly') {
+                    current.setDate(current.getDate() + 7);
+                } else if (originalTodo.repeat === 'monthly') {
+                    current.setMonth(current.getMonth() + 1);
+                } else if (originalTodo.repeat === 'yearly') {
+                    current.setFullYear(current.getFullYear() + 1);
+                }
+
+                // ISO文字列のフォーマットを維持 (YYYY-MM-DDTHH:mm)
+                // タイムゾーンオフセットを考慮
+                const offset = current.getTimezoneOffset() * 60000;
+                nextDate = (new Date(current - offset)).toISOString().slice(0, 16);
+            }
+        } else {
+            // 日付指定がないのに「繰り返し」設定がある場合
+            // 現在時刻を基準にするか、単にタスクを複製するか。
+            // ここでは「作成時の翌日/翌週」などを設定してあげるのが親切。
+            const current = new Date();
+            if (originalTodo.repeat === 'daily') {
+                current.setDate(current.getDate() + 1);
+            } else if (originalTodo.repeat === 'weekly') {
+                current.setDate(current.getDate() + 7);
+            } else if (originalTodo.repeat === 'monthly') {
+                current.setMonth(current.getMonth() + 1);
+            } else if (originalTodo.repeat === 'yearly') {
+                current.setFullYear(current.getFullYear() + 1);
+            }
+            const offset = current.getTimezoneOffset() * 60000;
+            nextDate = (new Date(current - offset)).toISOString().slice(0, 16);
+        }
+
+        const newTodo = {
+            ...originalTodo,
+            id: Date.now(), // 新しいID
+            reminder: nextDate,
+            completed: false, // 未完了
+            notified: false // 通知状態リセット
+        };
+
+        // 配列に追加
+        todos.push(newTodo);
+
+        // 完了通知（トーストなどで）出したほうが親切かもしれないが、saveTodos()で再描画されるのでリストに出現する
     }
 
     function deleteTodo(id) {
@@ -918,6 +1012,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="reminder-badge ${expiredClass}" title="クリックして日時を変更">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                         ${formatReminder(todo.reminder)}
+                        ${todo.repeat && todo.repeat !== 'none' ? `<span class="repeat-icon" title="繰り返し: ${getRepeatLabel(todo.repeat)}">🔄</span>` : ''}
                     </div>
                     <a href="${generateCalendarUrl(todo.text, todo.reminder)}" target="_blank" class="calendar-btn" title="Googleカレンダーに追加" onclick="event.stopPropagation()">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><line x1="10" y1="16" x2="14" y2="16"></line></svg>
@@ -1333,6 +1428,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         return result;
+    }
+    function getRepeatLabel(value) {
+        const labels = {
+            'daily': '毎日',
+            'weekly': '毎週',
+            'monthly': '毎月',
+            'yearly': '毎年'
+        };
+        return labels[value] || value;
     }
 });
 

@@ -37,37 +37,59 @@
             <div class="input-group glass-card">
                 <div class="input-wrapper">
                     <input type="text" id="todo-input" placeholder="新しいタスクを追加..." autocomplete="off">
-                    <div class="priority-input-container">
-                        <select id="todo-priority" aria-label="優先度">
-                            <option value="none">優先度: なし</option>
-                            <option value="high">High 🔥</option>
-                            <option value="medium">Medium ⚠️</option>
-                            <option value="low">Low ☕</option>
-                        </select>
-                        <div class="quick-priority-buttons">
-                            <button type="button" class="quick-priority-btn" data-priority="high">High</button>
-                            <button type="button" class="quick-priority-btn" data-priority="medium">Mid</button>
-                            <button type="button" class="quick-priority-btn" data-priority="low">Low</button>
-                            <button type="button" class="quick-priority-btn" data-priority="none">なし</button>
+
+                    <div class="input-options-row">
+                        <div class="priority-input-container">
+                            <select id="todo-priority" aria-label="優先度">
+                                <option value="none">優先度: なし</option>
+                                <option value="high">High 🔥</option>
+                                <option value="medium">Medium ⚠️</option>
+                                <option value="low">Low ☕</option>
+                            </select>
+                            <div class="quick-priority-buttons">
+                                <button type="button" class="quick-priority-btn" data-priority="high">High</button>
+                                <button type="button" class="quick-priority-btn" data-priority="medium">Mid</button>
+                                <button type="button" class="quick-priority-btn" data-priority="low">Low</button>
+                                <button type="button" class="quick-priority-btn" data-priority="none">なし</button>
+                            </div>
                         </div>
-                    </div>
-                    <div class="date-input-container">
-                        <input type="datetime-local" id="todo-date" aria-label="リマインド日時">
-                        <div class="quick-date-buttons">
-                            <button type="button" class="quick-date-btn" data-date="today">今日</button>
-                            <button type="button" class="quick-date-btn" data-date="tomorrow">明日</button>
-                            <button type="button" class="quick-date-btn" data-date="next-week">来週</button>
+
+                        <div class="date-input-container">
+                            <input type="datetime-local" id="todo-date" aria-label="リマインド日時">
+                            <div class="quick-date-buttons">
+                                <button type="button" class="quick-date-btn" data-date="today">今日</button>
+                                <button type="button" class="quick-date-btn" data-date="tomorrow">明日</button>
+                                <button type="button" class="quick-date-btn" data-date="next-week">来週</button>
+                            </div>
                         </div>
+
+                        <div class="repeat-input-container">
+                            <select id="todo-repeat" aria-label="繰り返し設定">
+                                <option value="none">繰り返し: なし</option>
+                                <option value="daily">毎日</option>
+                                <option value="weekly">毎週</option>
+                                <option value="monthly">毎月</option>
+                                <option value="yearly">毎年</option>
+                            </select>
+                            <div class="quick-repeat-buttons">
+                                <button type="button" class="quick-repeat-btn" data-repeat="daily">毎日</button>
+                                <button type="button" class="quick-repeat-btn" data-repeat="weekly">毎週</button>
+                                <button type="button" class="quick-repeat-btn" data-repeat="monthly">毎月</button>
+                                <button type="button" class="quick-repeat-btn" data-repeat="none">なし</button>
+                            </div>
+                        </div>
+
+                        <button id="add-btn" aria-label="タスクを追加">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </button>
                     </div>
                 </div>
-                <button id="add-btn" aria-label="タスクを追加">
-                    <!-- プラスアイコン (SVG) -->
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" />
-                    </svg>
-                </button>
             </div>
+
 
             <!-- フィルタリング & 検索エリア -->
             <div class="filter-section glass-card">
