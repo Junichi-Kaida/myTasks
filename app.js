@@ -425,6 +425,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     targetDate.setDate(now.getDate() + diff);
                     targetDate.setHours(9, 0, 0, 0);
+                } else if (type === 'none') {
+                    if (todoDate) {
+                        todoDate.value = '';
+                    }
+                    return; // 処理終了
                 }
 
                 // datetime-local形式 (YYYY-MM-DDTHH:mm) に変換
@@ -478,7 +483,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         });
+
+
+        // リセットボタン
+        const resetBtn = document.getElementById('reset-btn');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                todoInput.value = '';
+                if (todoPriority) {
+                    todoPriority.value = 'none';
+                    todoPriority.dispatchEvent(new Event('change'));
+                }
+                if (todoDate) todoDate.value = '';
+                if (todoRepeat) todoRepeat.value = 'none';
+
+                todoInput.focus();
+
+                // フィードバック
+                resetBtn.style.transform = 'rotate(360deg)';
+                setTimeout(() => resetBtn.style.transform = '', 300);
+            });
+        }
     }
+
 
 
     /**
@@ -664,8 +691,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function clearCompleted() {
-        todos = todos.filter(todo => !todo.completed);
-        saveTodos();
+        const completedCount = todos.filter(todo => todo.completed).length;
+        if (completedCount === 0) return;
+
+        if (confirm(`完了済みのタスク ${completedCount} 件を削除しますか？`)) {
+            todos = todos.filter(todo => !todo.completed);
+            saveTodos();
+        }
     }
 
     function updateTodoReminder(id, newDate) {

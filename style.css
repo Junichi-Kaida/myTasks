@@ -274,8 +274,35 @@ header h1 {
     /* バウンス効果 */
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     flex-shrink: 0;
+    margin-left: 10px;
+    /* 右端に寄せる -> 固定マージンに変更 */
+    position: relative;
+    z-index: 10;
+}
+
+#reset-btn {
     margin-left: auto;
-    /* 右端に寄せる */
+    background: transparent;
+    color: var(--text-muted);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+#reset-btn:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: var(--text-msg);
+}
+
+[data-theme="dark"] #reset-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Compact Layout Styles */
