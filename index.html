@@ -43,7 +43,14 @@
                         <option value="medium">Medium ⚠️</option>
                         <option value="low">Low ☕</option>
                     </select>
-                    <input type="datetime-local" id="todo-date" aria-label="リマインド日時">
+                    <div class="date-input-container">
+                        <input type="datetime-local" id="todo-date" aria-label="リマインド日時">
+                        <div class="quick-date-buttons">
+                            <button type="button" class="quick-date-btn" data-date="today">今日</button>
+                            <button type="button" class="quick-date-btn" data-date="tomorrow">明日</button>
+                            <button type="button" class="quick-date-btn" data-date="next-week">来週</button>
+                        </div>
+                    </div>
                 </div>
                 <button id="add-btn" aria-label="タスクを追加">
                     <!-- プラスアイコン (SVG) -->
@@ -121,7 +128,7 @@
     </div>
 
     <!-- メインロジックの読み込み -->
-    <script src="app.js?v=20251214-1" defer></script>
+    <script src="app.js?v=20251214-2" defer></script>
 </body>
 
 </html>

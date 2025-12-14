@@ -937,3 +937,53 @@ header h1 {
     animation: pulseMiyabi 2s infinite alternate;
     /* アニメーションは共通でOK */
 }
+
+/* Date Input improvements */
+.date-input-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.quick-date-buttons {
+    display: flex;
+    gap: 4px;
+}
+
+.quick-date-btn {
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: var(--font-body);
+}
+
+.quick-date-btn:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    transform: translateY(-1px);
+}
+
+.quick-date-btn:active {
+    transform: scale(0.95);
+}
+
+[data-theme="dark"] .quick-date-btn {
+    background: rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ヒントテキスト */
+.input-hint {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-left: 4px;
+    margin-top: -4px;
+    opacity: 0.8;
+}

@@ -388,7 +388,61 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderTodos();
             });
         });
+
+
+
+        // クイック日付選択ボタン
+        document.querySelectorAll('.quick-date-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const type = e.target.dataset.date;
+                const now = new Date();
+                let targetDate = new Date();
+
+                // デフォルト時間（例: 09:00）あるいは現在の時間
+                // ここでは利便性のため「翌日」などは朝9時にセットする
+                // 「今日」の場合は、現在時刻の1時間後、あるいは単純にセット
+
+                if (type === 'today') {
+                    // 今日: 現在時刻の1時間後 (日付が変わる場合は23:59まで)
+                    targetDate.setHours(now.getHours() + 1);
+                    targetDate.setMinutes(0);
+                    // もし明日になってしまったら明日の9時にする？単純に繰り越しでOKか
+                } else if (type === 'tomorrow') {
+                    // 明日: 明日の朝9時
+                    targetDate.setDate(now.getDate() + 1);
+                    targetDate.setHours(9, 0, 0, 0);
+                } else if (type === 'next-week') {
+                    // 来週: 次の月曜日 朝9時
+                    // ただし、もし明日が月曜日の場合（日曜日に操作）、明日は「来週」感がないため、さらに翌週にする
+                    const day = now.getDay();
+                    let diff = day === 0 ? 1 : 8 - day; // 次の月曜までの日数
+
+                    // もし明日が月曜なら、さらに7日足す
+                    if (diff <= 1) {
+                        diff += 7;
+                    }
+
+                    targetDate.setDate(now.getDate() + diff);
+                    targetDate.setHours(9, 0, 0, 0);
+                }
+
+                // datetime-local形式 (YYYY-MM-DDTHH:mm) に変換
+                // 日本時間でのオフセットを考慮
+                const offset = targetDate.getTimezoneOffset() * 60000;
+                const localISOTime = (new Date(targetDate - offset)).toISOString().slice(0, 16);
+
+                if (todoDate) {
+                    todoDate.value = localISOTime;
+                    // アニメーションなどでフィードバックがあると良い
+                    todoDate.style.backgroundColor = 'var(--primary-hover)';
+                    setTimeout(() => {
+                        todoDate.style.backgroundColor = '';
+                    }, 300);
+                }
+            });
+        });
     }
+
 
     /**
      * 通知権限を確認し、必要であればリクエストしてからタスクを追加する
@@ -1263,3 +1317,4 @@ document.addEventListener('DOMContentLoaded', () => {
         return result;
     }
 });
+
