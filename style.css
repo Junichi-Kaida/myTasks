@@ -48,6 +48,7 @@
 
 /* ダークモード設定 */
 [data-theme="dark"] {
+    color-scheme: dark;
     --primary: #818cf8;
     --primary-hover: #6366f1;
     --secondary: #f472b6;
@@ -775,6 +776,23 @@ header h1 {
     outline: none;
     cursor: pointer;
     font-family: var(--font-body);
+}
+
+/* ダークモード時の優先度セレクトボックス調整 */
+[data-theme="dark"] #todo-priority {
+    background: rgba(0, 0, 0, 0.3);
+    color: var(--text-main);
+}
+
+/* ドロップダウン選択肢の背景色 */
+#todo-priority option {
+    background-color: #ffffff;
+    color: #1f2937;
+}
+
+[data-theme="dark"] #todo-priority option {
+    background-color: #1f2937 !important;
+    color: #f3f4f6 !important;
 }
 
 .priority-badge {
