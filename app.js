@@ -572,7 +572,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             todos.push(newTodo);
-            saveTodos(); // 保存して再描画
+
+            // 現在のソート順を適用
+            if (currentSort.type === 'priority') {
+                sortTodosByPriority();
+            } else if (currentSort.type === 'date') {
+                sortTodosByDate();
+            } else {
+                saveTodos(); // 保存して再描画
+            }
 
             // フォームのリセット
             todoInput.value = '';
