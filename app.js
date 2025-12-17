@@ -1160,6 +1160,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 setupDragEvents(li, todo.id);
             }
 
+            // ダブルクリックで集中モード切り替え
+            li.addEventListener('dblclick', (e) => {
+                // ボタンや入力欄、バッジなどの操作要素をクリックした場合は無視
+                if (e.target.closest('button') ||
+                    e.target.closest('input') ||
+                    e.target.closest('a') ||
+                    e.target.closest('.priority-badge') ||
+                    e.target.closest('.reminder-badge') ||
+                    e.target.closest('.todo-title span')) { // テキスト編集との競合回避（念のため）
+                    return;
+                }
+                toggleFocusMode(todo.id);
+            });
+
             todoList.appendChild(li);
         });
 
