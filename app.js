@@ -684,6 +684,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function deleteTodo(id) {
+        if (!confirm('タスクを削除します。よろしいですか？')) return;
+
         const itemElement = document.querySelector(`li[data-id="${id}"]`);
 
         if (itemElement) {
