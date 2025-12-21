@@ -1050,7 +1050,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         sortedTodos.forEach(todo => {
             const li = document.createElement('li');
-            li.className = `todo-item ${todo.completed ? 'completed' : ''} ${todo.id === focusedTodoId ? 'focused' : ''}`;
+            li.className = `todo-item ${todo.completed ? 'completed' : ''} ${todo.id === focusedTodoId ? 'focused' : ''} ${!todo.completed && todo.reminder && isExpired(todo.reminder) ? 'expired' : ''}`;
             li.dataset.id = todo.id;
 
             // 集中モード中は対象以外を描画しない（もしくはCSSで隠すが、DOMに残す方がアニメーションしやすい）
@@ -1092,6 +1092,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 focusTimeHtml = `<span class="focus-time" title="集中時間"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:2px"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg><span ${idAttr}>${timeStr}</span></span>`;
             }
 
+            const isExpiredTask = !todo.completed && todo.reminder && isExpired(todo.reminder);
+            const expiredIcon = isExpiredTask ? '<span class="alert-icon" title="期限切れ">⚠️</span>' : '';
+
             li.innerHTML = `
                 <div class="checkbox-wrapper">
                     <input type="checkbox" ${todo.completed ? 'checked' : ''}>
@@ -1099,7 +1102,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="todo-content">
                     <div class="todo-title">
-                        <span>${escapeHtml(todo.text)}</span>
+                        ${expiredIcon}<span>${escapeHtml(todo.text)}</span>
                     </div>
                     <div class="todo-meta">
                         ${focusTimeHtml}

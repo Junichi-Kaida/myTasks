@@ -451,6 +451,27 @@ header h1 {
     color: var(--text-muted);
 }
 
+.todo-item.completed.expired {
+    background: transparent; /* 完了したら赤背景を解除 */
+}
+
+/* 期限切れタスクの強調表示 */
+.todo-item.expired:not(.completed) {
+    background: rgba(239, 68, 68, 0.1);
+    border-left: 4px solid var(--danger);
+}
+
+[data-theme="dark"] .todo-item.expired:not(.completed) {
+    background: rgba(239, 68, 68, 0.2);
+}
+
+.alert-icon {
+    color: var(--danger);
+    margin-right: 6px;
+    font-size: 1.1rem;
+    vertical-align: middle;
+}
+
 .todo-item.completed .checkbox-custom {
     background: var(--success);
     border-color: var(--success);
