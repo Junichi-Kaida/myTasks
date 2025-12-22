@@ -1,0 +1,13 @@
+{
+  "name": "mytasks-tests",
+  "version": "1.0.0",
+  "description": "Playwright tests for TODO App",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
+  }
+}
