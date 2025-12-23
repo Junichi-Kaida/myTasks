@@ -126,6 +126,14 @@ test.describe('TODO App Full Functional Test', () => {
         // ESCキーで解除
         await page.keyboard.press('Escape');
         await expect(page.locator('body')).not.toHaveClass(/focus-active/);
+
+        // 再度集中モードへ
+        await page.click('.focus-btn');
+        await expect(page.locator('body')).toHaveClass(/focus-active/);
+
+        // Spaceキーで解除
+        await page.keyboard.press(' ');
+        await expect(page.locator('body')).not.toHaveClass(/focus-active/);
     });
 
     test('CSV Export and Import', async ({ page }) => {

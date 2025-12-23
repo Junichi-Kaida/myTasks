@@ -318,10 +318,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         */
 
-        // ESCキーで集中モード解除
+        // ESCキーまたはSpaceキーで集中モード解除
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && focusedTodoId !== null) {
+            if (focusedTodoId === null) return;
+
+            const isInputMode = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable;
+            if (e.key === 'Escape' || (e.key === ' ' && !isInputMode)) {
                 exitFocusMode();
+                if (e.key === ' ') e.preventDefault(); // スクロール等のデフォルト挙動を防止
             }
         });
 
