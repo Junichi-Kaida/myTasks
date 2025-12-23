@@ -1,5 +1,5 @@
 {
-  "name": "mytasks-tests",
+  "name": "higanjima-tasks",
   "version": "1.0.0",
   "description": "Playwright tests for TODO App",
   "main": "index.js",

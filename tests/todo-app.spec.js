@@ -137,7 +137,7 @@ test.describe('TODO App Full Functional Test', () => {
         const downloadPromise = page.waitForEvent('download');
         await page.click('#export-csv-btn');
         const download = await downloadPromise;
-        expect(download.suggestedFilename()).toMatch(/mytasks_.*\.csv/);
+        expect(download.suggestedFilename()).toMatch(/higanjima_tasks_.*\.csv/);
 
         // Clear and Import
         await page.evaluate(() => localStorage.clear());

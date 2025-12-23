@@ -1402,7 +1402,7 @@ document.addEventListener('DOMContentLoaded', () => {
         link.setAttribute("href", url);
 
         const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-        link.setAttribute("download", `mytasks_${dateStr}.csv`);
+        link.setAttribute("download", `higanjima_tasks_${dateStr}.csv`);
 
         document.body.appendChild(link);
         link.click();
