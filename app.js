@@ -81,9 +81,12 @@ document.addEventListener('DOMContentLoaded', () => {
         renderTodos();
         setupEventListeners();
         requestNotificationPermission();
+        requestNotificationPermission();
         startReminderCheck();
 
         // 初期フォーカスを入力欄に設定してUXを向上
+
+
         if (todoInput) todoInput.focus();
     }
 
@@ -1512,5 +1515,331 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         return labels[value] || value;
     }
+
+    // -------------------------------------------------------------------------
+    // 休憩提案 (Focus Break) 機能
+    // -------------------------------------------------------------------------
+
+    // 定数設定
+    const FOCUS_BREAK_CONFIG = {
+        IDLE_THRESHOLD_MS: 60 * 1000,           // 60秒操作がないとIDLE
+        BREAK_EVERY_MS: 50 * 60 * 1000,         // 50分活動で提案
+        TICK_INTERVAL_MS: 1000,                 // 計測間隔
+        SAVE_INTERVAL_MS: 5000,                 // 保存間隔
+        MAX_TICK_DELTA_MS: 10000,               // スリープ復帰等の暴走防止リミット
+        COOLDOWN_SKIP_MS: 30 * 60 * 1000,       // "今回はしない" で30分抑制
+        COOLDOWN_SNOOZE_MS: 10 * 60 * 1000,     // "あと10分" で10分抑制
+        COOLDOWN_AFTER_BREAK_MS: 5 * 60 * 1000  // 休憩終了後は5分間提案しない
+    };
+
+    // 状態変数
+    let breakState = {
+        activeWorkTime: 0,
+        lastActivityAt: Date.now(),
+        lastTickAt: Date.now(),
+        breakSuggestionCooldownUntil: 0,
+        breakRunning: false,
+        breakEndAt: null
+    };
+
+    // 実行時変数
+    let breakTickInterval = null;
+    let lastBreakSaveTime = 0;
+    let isTabActive = true;
+
+    /**
+     * 休憩機能の初期化
+     */
+    function initBreakFeature() {
+        loadBreakState();
+
+        // Active判定用リスナー
+        ['keydown', 'mousedown', 'click', 'scroll', 'touchstart', 'mousemove'].forEach(event => {
+            window.addEventListener(event, onUserActivity, { passive: true });
+        });
+
+        // タブの表示状態監視
+        document.addEventListener('visibilitychange', () => {
+            isTabActive = !document.hidden;
+            if (isTabActive) {
+                onUserActivity(); // 復帰時はActive扱い
+                breakState.lastTickAt = Date.now(); // 復帰時の時間飛び防止
+            }
+        });
+
+        // 定期ティック開始
+        startBreakTick();
+
+        // 休憩中だった場合の復帰処理
+        if (breakState.breakRunning && breakState.breakEndAt) {
+            checkBreakStatus();
+            updateBreakTimerUI();
+        }
+    }
+
+    function checkBreakStatus() {
+        if (breakState.breakRunning) {
+            showBreakTimerUI();
+        }
+    }
+
+    function loadBreakState() {
+        try {
+            const saved = localStorage.getItem('focus_break_state');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                // 必須項目のマージ
+                breakState = { ...breakState, ...parsed };
+                // ただし lastActivityAt, lastTickAt は現在時刻にリセット（過去の時刻だと計算がおかしくなるため）
+                breakState.lastActivityAt = Date.now();
+                breakState.lastTickAt = Date.now();
+            }
+        } catch (e) {
+            console.warn("Failed to load break state", e);
+        }
+    }
+
+    function saveBreakState() {
+        try {
+            localStorage.setItem('focus_break_state', JSON.stringify({
+                activeWorkTime: breakState.activeWorkTime,
+                lastActivityAt: breakState.lastActivityAt,
+                lastTickAt: breakState.lastTickAt,
+                breakSuggestionCooldownUntil: breakState.breakSuggestionCooldownUntil,
+                breakRunning: breakState.breakRunning,
+                breakEndAt: breakState.breakEndAt
+            }));
+            lastBreakSaveTime = Date.now();
+        } catch (e) {
+            console.error("Failed to save break state", e);
+        }
+    }
+
+    function onUserActivity() {
+        breakState.lastActivityAt = Date.now();
+        // 休憩中なら操作してもActive時間は増えないが、状態保存タイミングとしては更新してもよい
+    }
+
+    function startBreakTick() {
+        if (breakTickInterval) clearInterval(breakTickInterval);
+        breakTickInterval = setInterval(tickWorkTime, FOCUS_BREAK_CONFIG.TICK_INTERVAL_MS);
+    }
+
+    /**
+     * 毎秒実行されるメインループ
+     */
+    function tickWorkTime() {
+        const now = Date.now();
+
+        // 休憩中の場合
+        if (breakState.breakRunning) {
+            updateBreakTimerUI(); // 残り時間更新
+            if (breakState.breakEndAt && now >= breakState.breakEndAt) {
+                stopBreak(); // 休憩終了
+            }
+            breakState.lastTickAt = now;
+            return;
+        }
+
+        // 集中モードでない場合はカウントしない
+        if (focusedTodoId === null) {
+            breakState.lastTickAt = now;
+            return;
+        }
+
+        // Active判定
+        // 1. タブが表示中
+        // 2. 最後の操作から閾値以内
+        const isUserActive = isTabActive && (now - breakState.lastActivityAt <= FOCUS_BREAK_CONFIG.IDLE_THRESHOLD_MS);
+
+        if (isUserActive) {
+            let delta = now - breakState.lastTickAt;
+            // 異常値クリップ (スリープ復帰など)
+            if (delta > FOCUS_BREAK_CONFIG.MAX_TICK_DELTA_MS) {
+                delta = 0;
+            }
+            if (delta > 0) {
+                breakState.activeWorkTime += delta;
+            }
+        }
+
+        breakState.lastTickAt = now;
+
+        // 定期保存
+        if (now - lastBreakSaveTime > FOCUS_BREAK_CONFIG.SAVE_INTERVAL_MS) {
+            saveBreakState();
+        }
+
+        // 休憩提案チェック
+        checkBreakSuggestion(now);
+    }
+
+    function checkBreakSuggestion(now) {
+        // 条件: 
+        // 1. Cooldown中でない
+        // 2. 規定時間を超えている
+        // 3. すでに提案が表示されていない
+        if (now < breakState.breakSuggestionCooldownUntil) return;
+
+        if (breakState.activeWorkTime >= FOCUS_BREAK_CONFIG.BREAK_EVERY_MS) {
+            showBreakSuggestion();
+        }
+    }
+
+    // --- UI関連 ---
+
+    let breakSuggestionEl = null;
+    let breakTimerEl = null;
+
+    function createBreakSuggestionUI() {
+        if (document.getElementById('break-suggestion-card')) return;
+
+        const div = document.createElement('div');
+        div.id = 'break-suggestion-card';
+        div.className = 'break-suggestion-card glass-card';
+        div.innerHTML = `
+            <div class="break-header">
+                <div class="break-icon">☕</div>
+                <div class="break-title">休憩の提案</div>
+            </div>
+            <div class="break-message">連続して50分作業しました。<br>少し休憩してリフレッシュしませんか？</div>
+            <div class="break-actions">
+                <button class="break-btn primary" data-action="break-5">5分休憩</button>
+                <button class="break-btn" data-action="break-10">10分休憩</button>
+                <button class="break-btn" data-action="snooze">あと10分</button>
+                <button class="break-btn" data-action="skip">今回はしない</button>
+            </div>
+        `;
+
+        document.body.appendChild(div);
+        breakSuggestionEl = div;
+
+        // イベントバブリングを活用
+        div.addEventListener('click', (e) => {
+            const btn = e.target.closest('.break-btn');
+            if (!btn) return;
+
+            const action = btn.dataset.action;
+            const now = Date.now();
+
+            if (action === 'break-5') {
+                startBreak(5);
+            } else if (action === 'break-10') {
+                startBreak(10);
+            } else if (action === 'snooze') {
+                hideBreakSuggestion();
+                breakState.breakSuggestionCooldownUntil = now + FOCUS_BREAK_CONFIG.COOLDOWN_SNOOZE_MS;
+                saveBreakState();
+            } else if (action === 'skip') {
+                hideBreakSuggestion();
+                breakState.breakSuggestionCooldownUntil = now + FOCUS_BREAK_CONFIG.COOLDOWN_SKIP_MS;
+                saveBreakState();
+            }
+        });
+    }
+
+    function showBreakSuggestion() {
+        if (!breakSuggestionEl) createBreakSuggestionUI();
+        // 表示済みなら何もしない
+        if (breakSuggestionEl.classList.contains('show')) return;
+
+        breakSuggestionEl.style.display = 'block';
+        // アニメーション用
+        requestAnimationFrame(() => {
+            breakSuggestionEl.classList.add('show');
+            // 音を鳴らす（既存の関数再利用）
+            playNotificationSound();
+        });
+    }
+
+    function hideBreakSuggestion() {
+        if (breakSuggestionEl) {
+            breakSuggestionEl.classList.remove('show');
+            setTimeout(() => {
+                breakSuggestionEl.style.display = 'none';
+            }, 400);
+        }
+    }
+
+    function createBreakTimerUI() {
+        if (document.getElementById('break-timer-card')) return;
+
+        const div = document.createElement('div');
+        div.id = 'break-timer-card';
+        div.className = 'break-timer-card';
+        div.innerHTML = `
+            <span>☕ 休憩中</span>
+            <span class="break-timer-text" id="break-timer-text"></span>
+            <button class="break-return-btn" id="break-return-btn">早めに戻る</button>
+        `;
+        document.body.appendChild(div);
+        breakTimerEl = div;
+
+        div.querySelector('#break-return-btn').addEventListener('click', stopBreak);
+    }
+
+    function showBreakTimerUI() {
+        if (!breakTimerEl) createBreakTimerUI();
+        breakTimerEl.style.display = 'flex';
+        requestAnimationFrame(() => breakTimerEl.classList.add('show'));
+    }
+
+    function hideBreakTimerUI() {
+        if (breakTimerEl) {
+            breakTimerEl.classList.remove('show');
+            setTimeout(() => {
+                breakTimerEl.style.display = 'none';
+            }, 400);
+        }
+    }
+
+    function updateBreakTimerUI() {
+        if (!breakState.breakRunning || !breakState.breakEndAt) return;
+
+        if (!breakTimerEl) createBreakTimerUI();
+        if (!breakTimerEl.classList.contains('show')) showBreakTimerUI();
+
+        const remainingMs = Math.max(0, breakState.breakEndAt - Date.now());
+        const remainingSec = Math.ceil(remainingMs / 1000);
+
+        const m = Math.floor(remainingSec / 60);
+        const s = remainingSec % 60;
+        const text = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+
+        const textEl = document.getElementById('break-timer-text');
+        if (textEl) textEl.textContent = text;
+
+        document.title = `[休憩 ${text}] 彼岸島タスク管理`;
+    }
+
+    function startBreak(minutes) {
+        hideBreakSuggestion();
+
+        breakState.breakRunning = true;
+        breakState.breakEndAt = Date.now() + (minutes * 60 * 1000);
+        breakState.activeWorkTime = 0;
+
+        saveBreakState();
+        showBreakTimerUI();
+        updateBreakTimerUI();
+    }
+
+    function stopBreak() {
+        breakState.breakRunning = false;
+        breakState.breakEndAt = null;
+        breakState.breakSuggestionCooldownUntil = Date.now() + FOCUS_BREAK_CONFIG.COOLDOWN_AFTER_BREAK_MS;
+
+        saveBreakState();
+        hideBreakTimerUI();
+
+        document.title = "彼岸島タスク管理";
+
+        playNotificationSound();
+        showToast("休憩終了！集中モードに戻ります。");
+    }
+
+    // 初期化実行 (変数宣言後に行うためここに配置)
+    initBreakFeature();
+
 });
 
