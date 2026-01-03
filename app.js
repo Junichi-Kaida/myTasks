@@ -1522,7 +1522,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 定数設定
     const FOCUS_BREAK_CONFIG = {
-        IDLE_THRESHOLD_MS: 60 * 1000,           // 60秒操作がないとIDLE
+        IDLE_THRESHOLD_MS: 5 * 60 * 1000,       // 5分操作がないとIDLE (緩和)
         BREAK_EVERY_MS: 50 * 60 * 1000,         // 50分活動で提案
         TICK_INTERVAL_MS: 1000,                 // 計測間隔
         SAVE_INTERVAL_MS: 5000,                 // 保存間隔
