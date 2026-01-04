@@ -1523,10 +1523,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // 定数設定
     const FOCUS_BREAK_CONFIG = {
         IDLE_THRESHOLD_MS: 5 * 60 * 1000,       // 5分操作がないとIDLE (緩和)
-        BREAK_EVERY_MS: 5 * 60 * 1000,          // 5分活動で提案 (テスト用)
+        BREAK_EVERY_MS: 50 * 60 * 1000,          // 50分活動で提案
         TICK_INTERVAL_MS: 1000,                 // 計測間隔
         SAVE_INTERVAL_MS: 5000,                 // 保存間隔
-        MAX_TICK_DELTA_MS: 10000,               // スリープ復帰等の暴走防止リミット
+        MAX_TICK_DELTA_MS: 5 * 60 * 1000,       // 5分まで許容（バックグラウンドでのthrottle対策）
         COOLDOWN_SKIP_MS: 30 * 60 * 1000,       // "今回はしない" で30分抑制
         COOLDOWN_SNOOZE_MS: 10 * 60 * 1000,     // "あと10分" で10分抑制
         COOLDOWN_AFTER_BREAK_MS: 5 * 60 * 1000  // 休憩終了後は5分間提案しない
@@ -1643,25 +1643,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 集中モードでない場合はカウントしない
         if (focusedTodoId === null) {
+            // console.log("Debug: Not in focus mode");
             breakState.lastTickAt = now;
             return;
         }
-
         // Active判定
-        // 1. タブが表示中
-        // 2. 最後の操作から閾値以内
-        const isUserActive = isTabActive && (now - breakState.lastActivityAt <= FOCUS_BREAK_CONFIG.IDLE_THRESHOLD_MS);
+        // 1. タブが表示中 -> 削除（バックグラウンドでも計測）
+        // 2. 最後の操作から閾値以内 -> 削除（別アプリ作業中も計測するため、集中モード中は常にActive扱い）
+        // const isUserActive = isTabActive && (now - breakState.lastActivityAt <= FOCUS_BREAK_CONFIG.IDLE_THRESHOLD_MS);
+        const isUserActive = true;
 
         if (isUserActive) {
             let delta = now - breakState.lastTickAt;
             // 異常値クリップ (スリープ復帰など)
             if (delta > FOCUS_BREAK_CONFIG.MAX_TICK_DELTA_MS) {
+                console.log("Debug: Delta too large, clipped:", delta);
                 delta = 0;
             }
             if (delta > 0) {
                 breakState.activeWorkTime += delta;
             }
+        } else {
+            console.log("Debug: User not active. Tab:", isTabActive, "Idle:", (now - breakState.lastActivityAt));
         }
+
+        console.log(`Debug: activeWorkTime: ${Math.floor(breakState.activeWorkTime / 1000)}s / ${FOCUS_BREAK_CONFIG.BREAK_EVERY_MS / 1000}s`);
 
         breakState.lastTickAt = now;
 
