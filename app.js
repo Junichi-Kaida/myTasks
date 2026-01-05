@@ -1703,6 +1703,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const div = document.createElement('div');
         div.id = 'break-suggestion-card';
         div.className = 'break-suggestion-card glass-card';
+
+        // 通知権限ボタンのHTMLを条件付きで生成するためのプレースホルダー
+        const notificationBtnHtml = (Notification.permission !== 'granted' && Notification.permission !== 'denied')
+            ? `<button class="break-btn secondary" data-action="enable-notification" style="margin-top: 8px; width: 100%;">🔔 デスクトップ通知を有効にする</button>`
+            : '';
+
         div.innerHTML = `
             <div class="break-header">
                 <div class="break-icon">☕</div>
@@ -1714,6 +1720,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button class="break-btn" data-action="break-10">10分休憩</button>
                 <button class="break-btn" data-action="snooze">あと10分</button>
                 <button class="break-btn" data-action="skip">今回はしない</button>
+                ${notificationBtnHtml}
             </div>
         `;
 
@@ -1740,6 +1747,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 hideBreakSuggestion();
                 breakState.breakSuggestionCooldownUntil = now + FOCUS_BREAK_CONFIG.COOLDOWN_SKIP_MS;
                 saveBreakState();
+            } else if (action === 'enable-notification') {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        btn.style.display = 'none';
+                        showToast("デスクトップ通知を有効にしました");
+                    }
+                });
             }
         });
     }
@@ -1755,6 +1769,18 @@ document.addEventListener('DOMContentLoaded', () => {
             breakSuggestionEl.classList.add('show');
             // 音を鳴らす（既存の関数再利用）
             playNotificationSound();
+
+            // デスクトップ通知
+            if (Notification.permission === 'granted') {
+                const notification = new Notification('休憩の提案', {
+                    body: '連続して50分作業しました。少し休憩しませんか？',
+                    icon: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRTc0QzNDIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGc+PHBhdGggZD0iTTE4IDhoMWE0IDQgMCAwIDEgMCA4aC0xIiAvPjxwYXRoIGQ9IkMyIDggMiA4IDIgOGg2YzIgMCAyIDIgMiAyMHYybS02IDB2MmItNiAwIiAvPjxwYXRoIGQ9Ik02IDF2MyIgLz48cGF0aCBkPSJNMTAgMXYzIiAvPjxwYXRoIGQ9Ik0xNCAxdjMiIC8+PC9nPjwvc3ZnPg==' // ☕ icon base64ish placeholder
+                });
+                notification.onclick = () => {
+                    window.focus();
+                    notification.close();
+                };
+            }
         });
     }
 
