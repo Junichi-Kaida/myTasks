@@ -1224,4 +1224,56 @@ header h1 {
     100% {
         box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
     }
+}/* Header Status Bar (Date & Work Time) */
+.header-status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0 0.5rem;
 }
+
+#date-display {
+    margin: 0;
+    /* 既存�Eスタイルがあれ�Eそれを優先、なければ調整 */
+    font-size: 0.95rem;
+    opacity: 0.9;
+}
+
+.work-time-display {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+#reset-work-time-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 2px;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color);
+}
+
+#reset-work-time-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Dark mode adjustment if needed */
+body.dark-mode .work-time-display {
+    background: rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+

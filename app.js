@@ -1547,11 +1547,26 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastBreakSaveTime = 0;
     let isTabActive = true;
 
+    // UI要素
+    let workTimeValueEl = null;
+    let resetWorkTimeBtn = null;
+
     /**
      * 休憩機能の初期化
      */
     function initBreakFeature() {
         loadBreakState();
+
+        // UI要素の取得
+        workTimeValueEl = document.getElementById('work-time-value');
+        resetWorkTimeBtn = document.getElementById('reset-work-time-btn');
+
+        if (resetWorkTimeBtn) {
+            resetWorkTimeBtn.addEventListener('click', () => {
+                // 活動時間をリセット
+                resetWorkTime();
+            });
+        }
 
         // Active判定用リスナー
         ['keydown', 'mousedown', 'click', 'scroll', 'touchstart', 'mousemove'].forEach(event => {
@@ -1574,6 +1589,24 @@ document.addEventListener('DOMContentLoaded', () => {
         if (breakState.breakRunning && breakState.breakEndAt) {
             checkBreakStatus();
             updateBreakTimerUI();
+        }
+
+        // 初回表示更新
+        updateWorkTimeDisplay();
+    }
+
+    function resetWorkTime() {
+        breakState.activeWorkTime = 0;
+        saveBreakState();
+        updateWorkTimeDisplay();
+        showToast("活動時間をリセットしました");
+    }
+
+    function updateWorkTimeDisplay() {
+        if (workTimeValueEl) {
+            // ミリ秒 -> 分
+            const minutes = Math.floor(breakState.activeWorkTime / 1000 / 60);
+            workTimeValueEl.textContent = minutes;
         }
     }
 
@@ -1645,6 +1678,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (focusedTodoId === null) {
             // console.log("Debug: Not in focus mode");
             breakState.lastTickAt = now;
+            updateWorkTimeDisplay(); // 0のまま表示更新等はしておく
             return;
         }
         // Active判定
@@ -1667,7 +1701,9 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("Debug: User not active. Tab:", isTabActive, "Idle:", (now - breakState.lastActivityAt));
         }
 
-        console.log(`Debug: activeWorkTime: ${Math.floor(breakState.activeWorkTime / 1000)}s / ${FOCUS_BREAK_CONFIG.BREAK_EVERY_MS / 1000}s`);
+        // console.log(`Debug: activeWorkTime: ${Math.floor(breakState.activeWorkTime / 1000)}s / ${FOCUS_BREAK_CONFIG.BREAK_EVERY_MS / 1000}s`);
+
+        updateWorkTimeDisplay(); // 表示更新
 
         breakState.lastTickAt = now;
 
@@ -1714,7 +1750,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="break-icon">☕</div>
                 <div class="break-title">休憩の提案</div>
             </div>
-            <div class="break-message">連続して50分作業しました。<br>少し休憩してリフレッシュしませんか？</div>
+            <div class="break-message">少し休憩してリフレッシュしませんか？</div>
             <div class="break-actions">
                 <button class="break-btn primary" data-action="break-5">5分休憩</button>
                 <button class="break-btn" data-action="break-10">10分休憩</button>
@@ -1773,7 +1809,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // デスクトップ通知
             if (Notification.permission === 'granted') {
                 const notification = new Notification('休憩の提案', {
-                    body: '連続して50分作業しました。少し休憩しませんか？',
+                    body: '少し休憩しませんか？',
                     icon: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRTc0QzNDIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGc+PHBhdGggZD0iTTE4IDhoMWE0IDQgMCAwIDEgMCA4aC0xIiAvPjxwYXRoIGQ9IkMyIDggMiA4IDIgOGg2YzIgMCAyIDIgMiAyMHYybS02IDB2MmItNiAwIiAvPjxwYXRoIGQ9Ik02IDF2MyIgLz48cGF0aCBkPSJNMTAgMXYzIiAvPjxwYXRoIGQ9Ik0xNCAxdjMiIC8+PC9nPjwvc3ZnPg==' // ☕ icon base64ish placeholder
                 });
                 notification.onclick = () => {
