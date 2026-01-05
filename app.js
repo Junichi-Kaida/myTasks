@@ -1550,6 +1550,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // UI要素
     let workTimeValueEl = null;
     let resetWorkTimeBtn = null;
+    let manualBreakBtn = null;
 
     /**
      * 休憩機能の初期化
@@ -1560,11 +1561,18 @@ document.addEventListener('DOMContentLoaded', () => {
         // UI要素の取得
         workTimeValueEl = document.getElementById('work-time-value');
         resetWorkTimeBtn = document.getElementById('reset-work-time-btn');
+        manualBreakBtn = document.getElementById('manual-break-btn');
 
         if (resetWorkTimeBtn) {
             resetWorkTimeBtn.addEventListener('click', () => {
                 // 活動時間をリセット
                 resetWorkTime();
+            });
+        }
+
+        if (manualBreakBtn) {
+            manualBreakBtn.addEventListener('click', () => {
+                showBreakSuggestion();
             });
         }
 
