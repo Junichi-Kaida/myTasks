@@ -1808,23 +1808,25 @@ document.addEventListener('DOMContentLoaded', () => {
         if (breakSuggestionEl.classList.contains('show')) return;
 
         breakSuggestionEl.style.display = 'block';
-        // アニメーション用
+
+        // 通知と音は即座に実行（バックグラウンド対策）
+        playNotificationSound();
+
+        // デスクトップ通知
+        if (Notification.permission === 'granted') {
+            const notification = new Notification('休憩の提案', {
+                body: '少し休憩しませんか？',
+                icon: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRTc0QzNDIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGc+PHBhdGggZD0iTTE4IDhoMWE0IDQgMCAwIDEgMCA4aC0xIiAvPjxwYXRoIGQ9IkMyIDggMiA4IDIgOGg2YzIgMCAyIDIgMiAyMHYybS02IDB2MmItNiAwIiAvPjxwYXRoIGQ9Ik02IDF2MyIgLz48cGF0aCBkPSJNMTAgMXYzIiAvPjxwYXRoIGQ9Ik0xNCAxdjMiIC8+PC9nPjwvc3ZnPg==' // ☕ icon base64ish placeholder
+            });
+            notification.onclick = () => {
+                window.focus();
+                notification.close();
+            };
+        }
+
+        // GUIアニメーションのみ requestAnimationFrame で実行
         requestAnimationFrame(() => {
             breakSuggestionEl.classList.add('show');
-            // 音を鳴らす（既存の関数再利用）
-            playNotificationSound();
-
-            // デスクトップ通知
-            if (Notification.permission === 'granted') {
-                const notification = new Notification('休憩の提案', {
-                    body: '少し休憩しませんか？',
-                    icon: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRTc0QzNDIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGc+PHBhdGggZD0iTTE4IDhoMWE0IDQgMCAwIDEgMCA4aC0xIiAvPjxwYXRoIGQ9IkMyIDggMiA4IDIgOGg2YzIgMCAyIDIgMiAyMHYybS02IDB2MmItNiAwIiAvPjxwYXRoIGQ9Ik02IDF2MyIgLz48cGF0aCBkPSJNMTAgMXYzIiAvPjxwYXRoIGQ9Ik0xNCAxdjMiIC8+PC9nPjwvc3ZnPg==' // ☕ icon base64ish placeholder
-                });
-                notification.onclick = () => {
-                    window.focus();
-                    notification.close();
-                };
-            }
         });
     }
 
