@@ -1805,7 +1805,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function showBreakSuggestion() {
         if (!breakSuggestionEl) createBreakSuggestionUI();
         // 表示済みなら何もしない
-        if (breakSuggestionEl.classList.contains('show')) return;
+        if (breakSuggestionEl.classList.contains('show') || breakSuggestionEl.style.display === 'block') return;
 
         breakSuggestionEl.style.display = 'block';
 
