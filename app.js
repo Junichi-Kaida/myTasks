@@ -1334,6 +1334,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 timerDisplay.textContent = formatTime(currentTotal);
             }
         }, 1000);
+
+        // 集中モード開始時に休憩通知のスケジュールを更新
+        if (typeof scheduleBreakNotification === 'function') {
+            scheduleBreakNotification();
+        }
     };
 
     function exitFocusMode() {
@@ -1358,6 +1363,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const overlay = document.getElementById('focus-overlay');
         if (overlay) overlay.classList.remove('active');
         renderTodos();
+
+        // 集中モード終了時に休憩通知のスケジュールをクリア
+        if (typeof scheduledBreakTimeout !== 'undefined' && scheduledBreakTimeout) {
+            clearTimeout(scheduledBreakTimeout);
+            scheduledBreakTimeout = null;
+        }
     }
 
     // 秒数を mm:ss 形式などに変換するヘルパー
@@ -1546,6 +1557,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let breakTickInterval = null;
     let lastBreakSaveTime = 0;
     let isTabActive = true;
+    let scheduledBreakTimeout = null; // バックグラウンド通知用タイマー
 
     // UI要素
     let workTimeValueEl = null;
@@ -1586,7 +1598,22 @@ document.addEventListener('DOMContentLoaded', () => {
             isTabActive = !document.hidden;
             if (isTabActive) {
                 onUserActivity(); // 復帰時はActive扱い
-                breakState.lastTickAt = Date.now(); // 復帰時の時間飛び防止
+                // バックグラウンドから復帰時に、経過時間を正しく加算
+                const now = Date.now();
+                if (focusedTodoId !== null && !breakState.breakRunning) {
+                    let delta = now - breakState.lastTickAt;
+                    // 異常値クリップ (長時間スリープ復帰など)
+                    if (delta > FOCUS_BREAK_CONFIG.MAX_TICK_DELTA_MS) {
+                        delta = FOCUS_BREAK_CONFIG.MAX_TICK_DELTA_MS; // 最大5分加算
+                    }
+                    if (delta > 0) {
+                        breakState.activeWorkTime += delta;
+                        updateWorkTimeDisplay();
+                    }
+                    // 即座に休憩提案チェック
+                    checkBreakSuggestion(now);
+                }
+                breakState.lastTickAt = now; // 復帰時の時間飛び防止
             }
         });
 
@@ -1664,6 +1691,63 @@ document.addEventListener('DOMContentLoaded', () => {
     function startBreakTick() {
         if (breakTickInterval) clearInterval(breakTickInterval);
         breakTickInterval = setInterval(tickWorkTime, FOCUS_BREAK_CONFIG.TICK_INTERVAL_MS);
+
+        // バックグラウンドでのスロットリング対策: 予定時刻に通知を確実に送る
+        scheduleBreakNotification();
+    }
+
+    /**
+     * 休憩提案の予定時刻にタイマーをセットする
+     * setIntervalがスロットリングされても、setTimeoutは比較的正確に動作する
+     */
+    function scheduleBreakNotification() {
+        if (scheduledBreakTimeout) {
+            clearTimeout(scheduledBreakTimeout);
+            scheduledBreakTimeout = null;
+        }
+
+        // 休憩中、クールダウン中、または集中モードでない場合はスケジュールしない
+        if (breakState.breakRunning || focusedTodoId === null) {
+            return;
+        }
+
+        const now = Date.now();
+
+        // クールダウン中なら、クールダウン終了後に再スケジュール
+        if (now < breakState.breakSuggestionCooldownUntil) {
+            const delayUntilCooldownEnd = breakState.breakSuggestionCooldownUntil - now + 1000;
+            scheduledBreakTimeout = setTimeout(() => {
+                scheduleBreakNotification();
+            }, delayUntilCooldownEnd);
+            return;
+        }
+
+        // 残りの活動時間を計算
+        const remainingMs = FOCUS_BREAK_CONFIG.BREAK_EVERY_MS - breakState.activeWorkTime;
+
+        if (remainingMs <= 0) {
+            // すでに閾値を超えている場合は即座にチェック
+            checkBreakSuggestion(now);
+            return;
+        }
+
+        // 残り時間後に通知をスケジュール
+        scheduledBreakTimeout = setTimeout(() => {
+            const checkTime = Date.now();
+            // 再度条件をチェックしてから通知
+            if (focusedTodoId !== null && !breakState.breakRunning &&
+                checkTime >= breakState.breakSuggestionCooldownUntil) {
+                // 経過時間を加算（バックグラウンドで計測が止まっていた場合の補正）
+                const delta = checkTime - breakState.lastTickAt;
+                if (delta > 0 && delta <= FOCUS_BREAK_CONFIG.MAX_TICK_DELTA_MS) {
+                    breakState.activeWorkTime += delta;
+                    breakState.lastTickAt = checkTime;
+                }
+                checkBreakSuggestion(checkTime);
+            }
+            // 次回のスケジュール
+            scheduleBreakNotification();
+        }, remainingMs + 1000); // 少し余裕を持たせる
     }
 
     /**
