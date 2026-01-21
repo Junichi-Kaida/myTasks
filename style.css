@@ -1281,3 +1281,50 @@ body.dark-mode .work-time-display {
     background: rgba(0, 0, 0, 0.2);
     border-color: rgba(255, 255, 255, 0.1);
 }
+
+/* ===========================
+   Task Complete Overlay
+   =========================== */
+#task-complete-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+#task-complete-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#task-complete-overlay img {
+    max-width: 85%;
+    max-height: 85%;
+    object-fit: contain;
+    border-radius: 12px;
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.6);
+    animation: taskCompleteZoom 0.5s ease-out forwards;
+}
+
+@keyframes taskCompleteZoom {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    60% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}

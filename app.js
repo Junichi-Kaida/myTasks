@@ -52,6 +52,26 @@ document.addEventListener('DOMContentLoaded', () => {
     let focusStartTime = null; // 集中開始時刻
     let focusTimerInterval = null; // タイマー用Interval ID
 
+    // タスク完了時の演出用画像リスト
+    const taskCompleteImages = [
+        'image/taskFix/S__7708744.jpg',
+        'image/taskFix/S__7708745.jpg',
+        'image/taskFix/S__7708746.jpg',
+        'image/taskFix/S__7708747.jpg',
+        'image/taskFix/S__7708748.jpg',
+        'image/taskFix/S__7708749.jpg',
+        'image/taskFix/S__7708750.jpg',
+        'image/taskFix/S__7708751.jpg',
+        'image/taskFix/S__7708752.jpg',
+        'image/taskFix/S__7708753.jpg',
+        'image/taskFix/S__7708755.jpg',
+        'image/taskFix/S__7708756.jpg',
+        'image/taskFix/S__7708757.jpg',
+        'image/taskFix/S__7708758.jpg',
+        'image/taskFix/S__7708759.jpg',
+        'image/taskFix/S__7708772.jpg'
+    ];
+
     // トーストコンテナの生成（なければ作成）
     let toastContainer = document.getElementById('toast-container');
     if (!toastContainer) {
@@ -210,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const notification = new Notification("タスクの時間です！", {
                     body: text,
-                    icon: "favicon.png" // カスタムアイコンを使用
+                    icon: "image/favicon.png" // カスタムアイコンを使用
                 });
                 // 通知クリックでウィンドウをアクティブにする
                 notification.onclick = function () {
@@ -536,7 +556,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         // 許可されたら即座にテスト通知を出して安心させる
                         new Notification("通知設定が完了しました", {
                             body: "時間になるとこのようにWindows通知が表示されます。",
-                            icon: "favicon.png"
+                            icon: "image/favicon.png"
                         });
                     }
                 });
@@ -606,9 +626,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // 完了状態を切り替える前に、対象のタスクを取得
         const targetTodo = todos.find(t => t.id === id);
 
+        // 未完了から完了への切り替えかどうかを記録
+        const isBeingCompleted = targetTodo && !targetTodo.completed;
+
         // もし未完了から完了へ切り替わる場合、かつ繰り返し設定がある場合
         // 次のタスクを作成する
-        if (targetTodo && !targetTodo.completed && targetTodo.repeat && targetTodo.repeat !== 'none') {
+        if (isBeingCompleted && targetTodo.repeat && targetTodo.repeat !== 'none') {
             createNextRecurringTask(targetTodo);
             // 元のタスクは「繰り返しなし」にして完了状態にする（これ以上の増殖を防ぐため）
             // ただし、要望によっては「親タスク」として扱いたい場合もあるが、
@@ -621,6 +644,11 @@ document.addEventListener('DOMContentLoaded', () => {
             todo.id === id ? { ...todo, completed: !todo.completed } : todo
         );
         saveTodos();
+
+        // タスク完了時に画像を表示
+        if (isBeingCompleted) {
+            showTaskCompleteImage(2500); // 2.5秒間表示
+        }
 
         // 集中モード中にそのタスクを完了（クローズ）した場合、集中モードを終了
         if (focusedTodoId === id) {
@@ -1383,6 +1411,39 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         return `${m}:${s.toString().padStart(2, '0')}`;
     }
+
+    // -------------------------------------------------------------------------
+    // タスク完了時の演出
+    // -------------------------------------------------------------------------
+
+    /**
+     * タスク完了時にランダムな画像を表示する
+     * @param {number} duration - 表示時間（ミリ秒）
+     */
+    function showTaskCompleteImage(duration = 2500) {
+        const overlay = document.getElementById('task-complete-overlay');
+        const img = document.getElementById('task-complete-image');
+        if (!overlay || !img) return;
+
+        // ランダムに画像を選択
+        const randomIndex = Math.floor(Math.random() * taskCompleteImages.length);
+        img.src = taskCompleteImages[randomIndex];
+
+        // 表示
+        overlay.classList.remove('hidden');
+        requestAnimationFrame(() => {
+            overlay.classList.add('show');
+        });
+
+        // 指定時間後にフェードアウト
+        setTimeout(() => {
+            overlay.classList.remove('show');
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+            }, 400); // CSSのtransition時間に合わせる
+        }, duration);
+    }
+
     // -------------------------------------------------------------------------
     // CSV Export / Import Logic
     // -------------------------------------------------------------------------
