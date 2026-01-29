@@ -1,78 +1,74 @@
 :root {
     /* =========================================
-       螟画焚螳夂ｾｩ (Color & Design Tokens)
+       変数定義 (Color & Design Tokens)
        ========================================= */
-    /* 繝｡繧､繝ｳ繧ｫ繝ｩ繝ｼ */
-    --primary: #0ea5e9;
-    /* 繝励Λ繧､繝槭Μ繝ｼ繧ｫ繝ｩ繝ｼ (Sky Blue) */
-    --primary-hover: #0284c7;
-    /* 繝帙ヰ繝ｼ譎ゅ�豼�＞濶ｲ */
-    --secondary: #22d3ee;
-    /* 繧｢繧ｯ繧ｻ繝ｳ繝医き繝ｩ繝ｼ (Cyan) */
+    /* メインカラー（藍色） */
+    --primary: #1e3a5f;
+    --primary-hover: #152a45;
+    /* アクセントカラー（朱色） */
+    --secondary: #c53d43;
 
-    /* 閭梧勹濶ｲ險ｭ螳� */
-    --background-start: #f3f4f6;
-    --background-end: #e5e7eb;
+    /* 背景色設定（和紙風） */
+    --background-start: #f5f1e8;
+    --background-end: #ebe4d4;
 
-    /* 繧ｰ繝ｩ繧ｹ繝｢繝ｼ繝輔ぅ繧ｺ繝��医☆繧翫ぎ繝ｩ繧ｹ�芽ｨｭ螳� */
-    --glass-bg: rgba(255, 255, 255, 0.7);
-    /* 閭梧勹縺ｮ蜊企乗�逋ｽ */
-    --glass-border: rgba(255, 255, 255, 0.5);
-    /* 繝懊�繝繝ｼ縺ｮ蜊企乗�逋ｽ */
-    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-    /* 譟斐ｉ縺九＞蠖ｱ */
+    /* 和紙風カード設定 */
+    --glass-bg: rgba(245, 241, 232, 0.85);
+    --glass-border: rgba(139, 119, 101, 0.3);
+    --glass-shadow: 0 4px 20px 0 rgba(44, 44, 44, 0.08);
 
-    /* 繝�く繧ｹ繝医き繝ｩ繝ｼ */
-    --text-main: #1f2937;
-    /* 荳ｻ隕√ユ繧ｭ繧ｹ繝� (Dark Gray) */
-    --text-muted: #6b7280;
-    /* 陬懆ｶｳ繝�く繧ｹ繝� (Gray) */
+    /* テキストカラー（墨色） */
+    --text-main: #2c2c2c;
+    --text-muted: #6b5c4c;
 
-    /* 繧ｹ繝��繧ｿ繧ｹ繧ｫ繝ｩ繝ｼ */
-    --danger: #ef4444;
-    /* 蜑企勁縺ｪ縺ｩ縺ｮ隴ｦ蜻願牡 (Red) */
-    --success: #10b981;
-    /* 螳御ｺ�↑縺ｩ縺ｮ謌仙粥濶ｲ (Green) */
+    /* ステータスカラー */
+    --danger: #b5495b;
+    /* 紅色 */
+    --success: #3a6960;
+    /* 青竹色 */
 
-    /* 繝輔か繝ｳ繝郁ｨｭ螳� */
-    --font-heading: 'Outfit', sans-serif;
-    /* 隕句�縺礼畑繝｢繝繝ｳ繝輔か繝ｳ繝� */
-    --font-body: 'Inter', sans-serif;
-    /* 譛ｬ譁�畑繧ｹ繧ｿ繝ｳ繝繝ｼ繝峨ヵ繧ｩ繝ｳ繝� */
+    /* フォント設定（和文） */
+    --font-heading: 'Noto Serif JP', serif;
+    /* 明朝体 */
+    --font-body: 'Noto Sans JP', sans-serif;
+    /* ゴシック体 */
 
-    /* 隗剃ｸｸ險ｭ螳� */
-    --radius-lg: 24px;
-    --radius-md: 16px;
-    --radius-sm: 8px;
+    /* 角丸設定（控えめ） */
+    --radius-lg: 12px;
+    --radius-md: 8px;
+    --radius-sm: 4px;
 }
 
-/* 繝繝ｼ繧ｯ繝｢繝ｼ繝芽ｨｭ螳� */
+/* ダークモード設定 */
 [data-theme="dark"] {
     color-scheme: dark;
-    --primary: #818cf8;
-    --primary-hover: #6366f1;
-    --secondary: #f472b6;
+    --primary: #c9a227;
+    /* 金色 */
+    --primary-hover: #a68520;
+    --secondary: #b5495b;
+    /* 紅色 */
 
-    --background-start: #111827;
-    --background-end: #1f2937;
+    --background-start: #1a1a2e;
+    --background-end: #16213e;
 
-    --glass-bg: rgba(30, 41, 59, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.1);
-    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+    --glass-bg: rgba(26, 26, 46, 0.85);
+    /* 漆のような深い色 */
+    --glass-border: rgba(201, 162, 39, 0.2);
+    /* 金色のボーダー */
+    --glass-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.4);
 
-    --text-main: #f3f4f6;
-    --text-muted: #9ca3af;
-
-    /* 蜈･蜉幄レ譎ｯ縺ｪ縺ｩ繧りｪｿ謨ｴ */
+    --text-main: #f5f3eb;
+    /* 象牙色 */
+    --text-muted: #a8a295;
 }
 
-/* 閭梧勹繧ｰ繝ｩ繝��繧ｷ繝ｧ繝ｳ�医ム繝ｼ繧ｯ繝｢繝ｼ繝臥畑�� */
+/* 背景グラデーション（ダークモード用） */
 [data-theme="dark"] body {
-    background: linear-gradient(135deg, #1e1b4b, #312e81, #1e293b);
+    background: linear-gradient(135deg, #1a1a2e, #16213e, #0f0f23);
     background-size: 200% 200%;
 }
 
-/* 繝ｪ繧ｻ繝�ヨ險ｭ螳� */
+/* リセット設定 */
 * {
     margin: 0;
     padding: 0;
@@ -80,26 +76,24 @@
 }
 
 /* =========================================
-   蝓ｺ譛ｬ繝ｬ繧､繧｢繧ｦ繝� (Body)
+   基本レイアウト (Body)
    ========================================= */
 body {
     font-family: var(--font-body);
-    /* 蜍慕噪縺ｪ繧ｰ繝ｩ繝��繧ｷ繝ｧ繝ｳ閭梧勹 */
-    background: linear-gradient(135deg, #38bdf8, #818cf8, #22d3ee);
+    /* 動的なグラデーション背景 */
+    background: linear-gradient(135deg, #f5f1e8, #ebe4d4, #e8dcc8);
     background-size: 200% 200%;
-    animation: gradientBG 15s ease infinite;
-    /* 繧�▲縺上ｊ濶ｲ縺悟､牙喧縺吶ｋ繧｢繝九Γ繝ｼ繧ｷ繝ｧ繝ｳ */
+    animation: gradientBG 30s ease infinite;
 
     color: var(--text-main);
     min-height: 100vh;
     display: flex;
-    /* 荳ｭ螟ｮ驟咲ｽｮ */
     justify-content: center;
     padding: 2rem 1rem;
     transition: background 0.5s, color 0.3s;
 }
 
-/* 閭梧勹繧ｰ繝ｩ繝��繧ｷ繝ｧ繝ｳ縺ｮ繧｢繝九Γ繝ｼ繧ｷ繝ｧ繝ｳ螳夂ｾｩ */
+/* 背景グラデーションのアニメーション定義 */
 @keyframes gradientBG {
     0% {
         background-position: 0% 50%;
@@ -115,25 +109,22 @@ body {
 }
 
 /* =========================================
-   繧｢繝励Μ繧ｱ繝ｼ繧ｷ繝ｧ繝ｳ繧ｳ繝ｳ繝�リ (Main Loop)
+   アプリケーションコンテナ
    ========================================= */
 #app {
     width: 100%;
     max-width: 800px;
-    /* 蟷�ｒ蠎�￡縺ｦPC縺ｧ繧りｦ九ｄ縺吶￥ */
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    /* 蜷�ｦ∫ｴ�髢薙�菴咏區 */
 }
 
 /* =========================================
-   繝倥ャ繝繝ｼ繧ｨ繝ｪ繧｢
+   ヘッダーエリア
    ========================================= */
 header {
     text-align: center;
-    color: white;
-    /* 繝倥ャ繝繝ｼ譁�ｭ励�蟶ｸ縺ｫ逋ｽ�郁レ譎ｯ縺梧ｿ�＞縺溘ａ�� */
+    color: var(--primary);
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     margin-bottom: 0.5rem;
 }
@@ -156,9 +147,9 @@ header h1 {
 }
 
 .theme-btn {
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
+    background: rgba(30, 58, 95, 0.1);
+    border: 1px solid rgba(30, 58, 95, 0.2);
+    border-radius: var(--radius-sm);
     width: 32px;
     height: 32px;
     display: flex;
@@ -166,13 +157,21 @@ header h1 {
     justify-content: center;
     cursor: pointer;
     font-size: 1.2rem;
-    transition: all 0.2s;
-    backdrop-filter: blur(4px);
+    transition: all 0.25s ease;
 }
 
 .theme-btn:hover {
-    background: rgba(255, 255, 255, 0.4);
-    transform: rotate(15deg);
+    background: rgba(30, 58, 95, 0.15);
+    transform: scale(1.05);
+}
+
+[data-theme="dark"] .theme-btn {
+    background: rgba(201, 162, 39, 0.1);
+    border-color: rgba(201, 162, 39, 0.2);
+}
+
+[data-theme="dark"] .theme-btn:hover {
+    background: rgba(201, 162, 39, 0.2);
 }
 
 #date-display {
@@ -182,33 +181,46 @@ header h1 {
 }
 
 /* =========================================
-   蜈ｱ騾壹さ繝ｳ繝昴�繝阪Φ繝�: Glass Card
+   共通コンポーネント: Glass Card
    ========================================= */
 .glass-card {
     background: var(--glass-bg);
-    backdrop-filter: blur(12px);
-    /* 閭梧勹繧偵⊂縺九☆蜃ｦ逅� */
-    -webkit-backdrop-filter: blur(12px);
-    /* Safari蟇ｾ蠢� */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border: 1px solid var(--glass-border);
     border-radius: var(--radius-lg);
     box-shadow: var(--glass-shadow);
     padding: 1.5rem;
+    position: relative;
+}
+
+/* 和紙風のテクスチャ効果 */
+.glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        radial-gradient(ellipse at 20% 30%, rgba(139, 119, 101, 0.03) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, rgba(139, 119, 101, 0.03) 0%, transparent 50%);
+    border-radius: var(--radius-lg);
+    pointer-events: none;
 }
 
 /* =========================================
-   蜈･蜉帙お繝ｪ繧｢ (Input Group)
+   入力エリア (Input Group)
    ========================================= */
 .input-group {
     display: flex;
     gap: 0.75rem;
     padding: 1rem;
     transition: transform 0.2s ease;
-    /*蜈･蜉帶凾縺ｮ蠕ｮ邏ｰ縺ｪ蜍輔″ */
     align-items: flex-start;
 }
 
-/* 譌･譎ょ�蜉帙→繝�く繧ｹ繝亥�蜉帙ｒ縺ｾ縺ｨ繧√ｋ繝ｩ繝�ヱ繝ｼ */
+/* 日時入力とテキスト入力をまとめるラッパー */
 .input-wrapper {
     flex: 1;
     display: flex;
@@ -217,8 +229,7 @@ header h1 {
 }
 
 .input-group:focus-within {
-    transform: scale(1.02);
-    /* 繝輔か繝ｼ繧ｫ繧ｹ譎ゅ↓蟆代＠諡｡螟ｧ */
+    transform: scale(1.01);
 }
 
 #todo-input {
@@ -236,9 +247,9 @@ header h1 {
 }
 
 #todo-date {
-    border: none;
-    background: rgba(255, 255, 255, 0.5);
-    border-radius: 6px;
+    border: 1px solid rgba(139, 119, 101, 0.2);
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: var(--radius-sm);
     padding: 4px 8px;
     font-family: var(--font-body);
     color: var(--text-muted);
@@ -248,7 +259,8 @@ header h1 {
 }
 
 [data-theme="dark"] #todo-date {
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(26, 26, 46, 0.5);
+    border-color: rgba(201, 162, 39, 0.2);
     color: var(--text-main);
 }
 
@@ -257,25 +269,22 @@ header h1 {
     background: white;
 }
 
-/* 霑ｽ蜉�繝懊ち繝ｳ */
+/* 追加ボタン */
 #add-btn {
     background: var(--primary);
-    color: white;
+    color: #f5f1e8;
     border: none;
     width: 44px;
     height: 44px;
-    border-radius: 50%;
-    /* 螳悟�縺ｪ蜀�ｽ｢ */
+    border-radius: var(--radius-md);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    /* 繝舌え繝ｳ繧ｹ蜉ｹ譫� */
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(30, 58, 95, 0.2);
     flex-shrink: 0;
     margin-left: 10px;
-    /* 蜿ｳ遶ｯ縺ｫ蟇�○繧� -> 蝗ｺ螳壹�繝ｼ繧ｸ繝ｳ縺ｫ螟画峩 */
     position: relative;
     z-index: 10;
 }
@@ -305,7 +314,7 @@ header h1 {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Compact Layout Styles */
+/* コンパクトレイアウト */
 .input-options-row {
     display: flex;
     flex-wrap: wrap;
@@ -325,16 +334,14 @@ header h1 {
 #add-btn:hover {
     background: var(--primary-hover);
     transform: translateY(-1px);
-    /* 豬ｮ縺堺ｸ翫′繧九お繝輔ぉ繧ｯ繝� */
 }
 
 #add-btn:active {
     transform: scale(0.95);
-    /* 謚ｼ縺励◆豐医∩霎ｼ縺ｿ繧ｨ繝輔ぉ繧ｯ繝� */
 }
 
 /* =========================================
-   繝輔ぅ繝ｫ繧ｿ繝ｪ繝ｳ繧ｰ & 讀懃ｴ｢繧ｨ繝ｪ繧｢
+   フィルタリング & 検索エリア
    ========================================= */
 .filter-section {
     padding: 1rem;
@@ -345,19 +352,32 @@ header h1 {
 
 #search-input {
     width: 100%;
-    padding: 8px 12px;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    background: rgba(255, 255, 255, 0.6);
-    border-radius: 8px;
+    padding: 10px 14px;
+    border: 1px solid rgba(139, 119, 101, 0.2);
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: var(--radius-sm);
     font-size: 0.95rem;
     color: var(--text-main);
     outline: none;
     font-family: var(--font-body);
+    transition: all 0.25s ease;
 }
 
 #search-input:focus {
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.85);
     border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.1);
+}
+
+[data-theme="dark"] #search-input {
+    background: rgba(26, 26, 46, 0.5);
+    border-color: rgba(201, 162, 39, 0.2);
+}
+
+[data-theme="dark"] #search-input:focus {
+    background: rgba(26, 26, 46, 0.7);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.1);
 }
 
 .filter-groups {
@@ -381,9 +401,10 @@ header h1 {
 
 .filter-buttons {
     display: flex;
-    background: rgba(255, 255, 255, 0.4);
-    border-radius: 8px;
+    background: rgba(139, 119, 101, 0.1);
+    border-radius: var(--radius-sm);
     padding: 2px;
+    border: 1px solid rgba(139, 119, 101, 0.15);
 }
 
 .filter-btn {
@@ -392,25 +413,36 @@ header h1 {
     padding: 4px 12px;
     font-size: 0.8rem;
     cursor: pointer;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     color: var(--text-muted);
     font-weight: 500;
-    transition: all 0.2s;
+    transition: all 0.25s ease;
 }
 
 .filter-btn:hover {
     color: var(--primary);
+    background: rgba(30, 58, 95, 0.05);
 }
 
 .filter-btn.active {
-    background: white;
-    color: var(--primary);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    font-weight: 700;
+    background: var(--primary);
+    color: #f5f1e8;
+    box-shadow: 0 1px 3px rgba(30, 58, 95, 0.2);
+    font-weight: 600;
+}
+
+[data-theme="dark"] .filter-buttons {
+    background: rgba(201, 162, 39, 0.1);
+    border-color: rgba(201, 162, 39, 0.2);
+}
+
+[data-theme="dark"] .filter-btn.active {
+    background: var(--primary);
+    color: #1a1a2e;
 }
 
 /* =========================================
-   TODO繝ｪ繧ｹ繝郁｡ｨ遉ｺ繧ｨ繝ｪ繧｢
+   TODOリスト表示エリア
    ========================================= */
 .todo-list-container {
     padding: 0;
@@ -420,11 +452,10 @@ header h1 {
 #todo-list {
     list-style: none;
     max-height: 50vh;
-    /* 髟ｷ縺上↑繧翫☆縺弱↑縺�ｈ縺�↓繧ｹ繧ｯ繝ｭ繝ｼ繝ｫ險ｭ螳� */
     overflow-y: auto;
 }
 
-/* 蛟句挨縺ｮ繧ｿ繧ｹ繧ｯ繧｢繧､繝�Β */
+/* 個別のタスクアイテム */
 .todo-item {
     display: flex;
     align-items: center;
@@ -433,7 +464,6 @@ header h1 {
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     transition: background 0.2s;
     animation: slideIn 0.3s ease-out forwards;
-    /* 霑ｽ蜉�譎ゅ�繧｢繝九Γ繝ｼ繧ｷ繝ｧ繝ｳ */
 }
 
 .todo-item:last-child {
@@ -442,10 +472,9 @@ header h1 {
 
 .todo-item:hover {
     background: rgba(255, 255, 255, 0.3);
-    /* 繝帙ヰ繝ｼ譎ゅ�繝上う繝ｩ繧､繝� */
 }
 
-/* 螳御ｺ�憾諷九�繧ｹ繧ｿ繧､繝ｫ */
+/* 完了状態のスタイル */
 .todo-item.completed span {
     text-decoration: line-through;
     color: var(--text-muted);
@@ -453,10 +482,9 @@ header h1 {
 
 .todo-item.completed.expired {
     background: transparent;
-    /* 螳御ｺ�＠縺溘ｉ襍､閭梧勹繧定ｧ｣髯､ */
 }
 
-/* 譛滄剞蛻�ｌ繧ｿ繧ｹ繧ｯ縺ｮ蠑ｷ隱ｿ陦ｨ遉ｺ */
+/* 期限切れタスクの強調表示 */
 .todo-item.expired:not(.completed) {
     background: rgba(239, 68, 68, 0.1);
     border-left: 4px solid var(--danger);
@@ -478,19 +506,17 @@ header h1 {
     border-color: var(--success);
 }
 
-/* 繧ｫ繧ｹ繧ｿ繝�繝√ぉ繝�け繝懊ャ繧ｯ繧ｹ */
+/* カスタムチェックボックス */
 .checkbox-wrapper {
     position: relative;
     width: 24px;
     height: 24px;
     flex-shrink: 0;
-    /* 邵ｮ縺ｾ縺ｪ縺�ｈ縺�↓縺吶ｋ */
     cursor: pointer;
 }
 
 .checkbox-wrapper input {
     opacity: 0;
-    /* 譛ｬ譚･縺ｮ繝√ぉ繝�け繝懊ャ繧ｯ繧ｹ縺ｯ髫�縺� */
     width: 0;
     height: 0;
 }
@@ -504,11 +530,10 @@ header h1 {
     background: transparent;
     border: 2px solid var(--text-muted);
     border-radius: 50%;
-    /* 荳ｸ縺�ｽ｢迥ｶ */
     transition: all 0.2s;
 }
 
-/* 繝√ぉ繝�け繝槭�繧ｯ縺ｮ繧｢繝九Γ繝ｼ繧ｷ繝ｧ繝ｳ */
+/* チェックマークのアニメーション */
 .checkbox-custom::after {
     content: '';
     position: absolute;
@@ -519,16 +544,14 @@ header h1 {
     border: solid white;
     border-width: 0 2px 2px 0;
     transform: rotate(45deg) scale(0);
-    /* 蛻晄悄迥ｶ諷九�髱櫁｡ｨ遉ｺ */
     transition: transform 0.2s;
 }
 
 .todo-item.completed .checkbox-custom::after {
     transform: rotate(45deg) scale(1);
-    /* 螳御ｺ�凾縺ｫ陦ｨ遉ｺ */
 }
 
-/* 繝｡繧､繝ｳ繧ｳ繝ｳ繝�Φ繝�Λ繝�ヱ繝ｼ */
+/* メインコンテンツラッパー */
 .todo-content {
     flex: 1;
     display: flex;
@@ -536,7 +559,6 @@ header h1 {
     justify-content: space-between;
     gap: 1rem;
     min-width: 0;
-    /* Flexbox蜀�〒縺ｮ繝�く繧ｹ繝育怐逡･逕ｨ */
 }
 
 .todo-title {
@@ -552,10 +574,9 @@ header h1 {
     align-items: center;
     gap: 8px;
     flex-shrink: 0;
-    /* 繝｡繧ｿ繝��繧ｿ縺ｯ邵ｮ繧√↑縺� */
 }
 
-/* 繝ｪ繝槭う繝ｳ繝繝ｼ繝舌ャ繧ｸ */
+/* リマインダーバッジ */
 .reminder-badge {
     font-size: 0.8rem;
     color: var(--primary);
@@ -575,14 +596,13 @@ header h1 {
     font-weight: 700;
 }
 
-/* 蜑企勁繝懊ち繝ｳ */
+/* 削除ボタン */
 .delete-btn {
     background: transparent;
     border: none;
     color: var(--text-muted);
     cursor: pointer;
     opacity: 0;
-    /* 繝�ヵ繧ｩ繝ｫ繝医�髱櫁｡ｨ遉ｺ */
     transition: all 0.2s;
     padding: 4px;
     border-radius: 4px;
@@ -595,16 +615,15 @@ header h1 {
 
 .todo-item:hover .delete-btn {
     opacity: 1;
-    /* 繝帙ヰ繝ｼ譎ゅ↓陦ｨ遉ｺ */
 }
 
 .delete-btn:hover {
     color: var(--danger);
-    background: rgba(239, 68, 68, 0.1);
+    background: rgba(181, 73, 91, 0.1);
 }
 
 /* =========================================
-   繧ｳ繝ｳ繝医Ο繝ｼ繝ｫ繧ｨ繝ｪ繧｢ (Footer)
+   コントロールエリア (Footer)
    ========================================= */
 .controls {
     display: flex;
@@ -627,16 +646,23 @@ header h1 {
     color: var(--text-muted);
     cursor: pointer;
     font-weight: 500;
-    transition: color 0.2s;
+    transition: all 0.25s ease;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
 }
 
 .text-btn:hover {
     color: var(--primary);
-    text-decoration: underline;
+    background: rgba(30, 58, 95, 0.08);
+}
+
+[data-theme="dark"] .text-btn:hover {
+    color: var(--primary);
+    background: rgba(201, 162, 39, 0.1);
 }
 
 /* =========================================
-   繧｢繝九Γ繝ｼ繧ｷ繝ｧ繝ｳ螳夂ｾｩ
+   アニメーション定義
    ========================================= */
 @keyframes slideIn {
     from {
@@ -657,7 +683,7 @@ header h1 {
     }
 }
 
-/* 繝ｦ繝ｼ繝�ぅ繝ｪ繝�ぅ */
+/* ユーティリティ */
 .hidden {
     display: none;
 }
@@ -670,7 +696,7 @@ header h1 {
     font-style: italic;
 }
 
-/* 繧ｹ繧ｯ繝ｭ繝ｼ繝ｫ繝舌�縺ｮ繧ｫ繧ｹ繧ｿ繝槭う繧ｺ */
+/* スクロールバーのカスタマイズ */
 #todo-list::-webkit-scrollbar {
     width: 6px;
 }
@@ -682,7 +708,6 @@ header h1 {
 #todo-list::-webkit-scrollbar-thumb {
     background: rgba(0, 0, 0, 0.1);
     border-radius: 3px;
-    /* 繝帙ヰ繝ｼ譎ゅ�繝上う繝ｩ繧､繝� */
 }
 
 #todo-list::-webkit-scrollbar-thumb:hover {
@@ -691,7 +716,7 @@ header h1 {
 
 
 /* =========================================
-   繧､繝ｳ繝ｩ繧､繝ｳ邱ｨ髮�畑繧ｹ繧ｿ繧､繝ｫ (Date Edit)
+   インライン編集用スタイル (Date Edit)
    ========================================= */
 .reminder-badge {
     cursor: pointer;
@@ -716,7 +741,7 @@ header h1 {
 }
 
 /* =========================================
-   繧｢繝励Μ蜀�夂衍�医ヨ繝ｼ繧ｹ繝茨ｼ�
+   アプリ内通知（トースト）
    ========================================= */
 .toast-container {
     position: fixed;
@@ -727,29 +752,26 @@ header h1 {
     flex-direction: column;
     gap: 10px;
     pointer-events: none;
-    /* 荳九�隕∫ｴ�繧偵け繝ｪ繝�け縺ｧ縺阪ｋ繧医≧縺ｫ */
 }
 
 .toast {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-left: 4px solid var(--primary-color);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    background: rgba(245, 241, 232, 0.95);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-left: 3px solid var(--primary);
+    box-shadow: 0 4px 20px rgba(44, 44, 44, 0.15);
     padding: 1rem;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     display: flex;
     align-items: flex-start;
     gap: 12px;
     min-width: 320px;
     max-width: 400px;
     pointer-events: auto;
-    /* 繝医�繧ｹ繝郁�菴薙�謫堺ｽ懷庄閭ｽ */
 
     transform: translateX(120%);
     transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
-    /* 菫ｮ豁｣ */
     border-left-color: var(--primary);
 }
 
@@ -764,10 +786,19 @@ header h1 {
     width: 28px;
     height: 28px;
     background: var(--primary);
-    color: white;
-    border-radius: 50%;
+    color: #f5f1e8;
+    border-radius: var(--radius-sm);
     flex-shrink: 0;
     margin-top: 2px;
+}
+
+[data-theme="dark"] .toast {
+    background: rgba(26, 26, 46, 0.95);
+    border-left-color: var(--primary);
+}
+
+[data-theme="dark"] .toast-icon {
+    color: #1a1a2e;
 }
 
 .toast-content {
@@ -807,7 +838,7 @@ header h1 {
     color: #333;
 }
 
-/* 繝峨Λ繝�げ��ラ繝ｭ繝��逕ｨ繧ｹ繧ｿ繧､繝ｫ */
+/* ドラッグ&ドロップ用スタイル */
 .todo-item[draggable="true"] {
     cursor: grab;
 }
@@ -818,8 +849,8 @@ header h1 {
 
 .todo-item.dragging {
     opacity: 0.5;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px dashed rgba(255, 255, 255, 0.3);
+    background: rgba(139, 119, 101, 0.05);
+    border: 1px dashed rgba(139, 119, 101, 0.3);
 }
 
 
@@ -828,7 +859,7 @@ header h1 {
     transform: translateY(2px);
 }
 
-/* 繧､繝ｳ繝ｩ繧､繝ｳ邱ｨ髮�畑繝�く繧ｹ繝亥�蜉� */
+/* インライン編集用テキスト入力 */
 .edit-text-input {
     font-size: 1rem;
     color: var(--text-main);
@@ -841,11 +872,11 @@ header h1 {
     font-family: inherit;
 }
 
-/* 蜆ｪ蜈亥ｺｦ繧ｿ繧ｰ逕ｨ繧ｹ繧ｿ繧､繝ｫ */
+/* 優先度タグ用スタイル */
 #todo-priority {
-    background: rgba(255, 255, 255, 0.5);
-    border: none;
-    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(139, 119, 101, 0.2);
+    border-radius: var(--radius-sm);
     padding: 0.8rem;
     font-size: 1rem;
     color: var(--text-main);
@@ -853,17 +884,17 @@ header h1 {
     cursor: pointer;
     font-family: var(--font-body);
     width: auto;
-    /* 繧ｳ繝ｳ繝代け繝医↓縺吶ｋ */
     min-width: 120px;
 }
 
-/* 繝繝ｼ繧ｯ繝｢繝ｼ繝画凾縺ｮ蜆ｪ蜈亥ｺｦ繧ｻ繝ｬ繧ｯ繝医�繝�け繧ｹ隱ｿ謨ｴ */
+/* ダークモード時の優先度セレクトテックス調整 */
 [data-theme="dark"] #todo-priority {
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(26, 26, 46, 0.5);
+    border-color: rgba(201, 162, 39, 0.2);
     color: var(--text-main);
 }
 
-/* 繝峨Ο繝��繝繧ｦ繝ｳ驕ｸ謚櫁い縺ｮ閭梧勹濶ｲ */
+/* ドロップダウン選択肢の背景色 */
 #todo-priority option {
     background-color: #ffffff;
     color: #1f2937;
@@ -878,37 +909,60 @@ header h1 {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 2px 8px;
-    border-radius: 12px;
+    padding: 3px 10px;
+    border-radius: var(--radius-sm);
     font-size: 0.75rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.25s ease;
     user-select: none;
     border: 1px solid transparent;
+    letter-spacing: 0.5px;
 }
 
 .priority-badge:hover {
-    filter: brightness(0.9);
-    transform: scale(1.05);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
+/* 高優先度 - 紅色 */
 .priority-high {
-    background-color: #fee2e2;
-    color: #ef4444;
-    border-color: #fecaca;
+    background-color: rgba(181, 73, 91, 0.12);
+    color: #b5495b;
+    border-color: rgba(181, 73, 91, 0.3);
 }
 
+/* 中優先度 - 山吹色 */
 .priority-medium {
-    background-color: #ffedd5;
-    color: #f97316;
-    border-color: #fed7aa;
+    background-color: rgba(201, 162, 39, 0.12);
+    color: #9a7b1a;
+    border-color: rgba(201, 162, 39, 0.3);
 }
 
+/* 低優先度 - 藍色 */
 .priority-low {
-    background-color: #dbeafe;
-    color: #3b82f6;
-    border-color: #bfdbfe;
+    background-color: rgba(30, 58, 95, 0.1);
+    color: #1e3a5f;
+    border-color: rgba(30, 58, 95, 0.25);
+}
+
+/* ダークモード用優先度バッジ */
+[data-theme="dark"] .priority-high {
+    background-color: rgba(181, 73, 91, 0.2);
+    color: #e8879a;
+    border-color: rgba(181, 73, 91, 0.4);
+}
+
+[data-theme="dark"] .priority-medium {
+    background-color: rgba(201, 162, 39, 0.2);
+    color: #d4b84a;
+    border-color: rgba(201, 162, 39, 0.4);
+}
+
+[data-theme="dark"] .priority-low {
+    background-color: rgba(100, 149, 237, 0.15);
+    color: #8ab4f8;
+    border-color: rgba(100, 149, 237, 0.3);
 }
 
 
@@ -940,13 +994,12 @@ header h1 {
 .calendar-btn:hover {
     background: rgba(255, 255, 255, 0.2);
     color: #4285F4;
-    /* Google Blue */
     opacity: 1;
     transform: scale(1.1);
 }
 
 /* =========================================
-   Miyabi 繧ｪ繝ｼ繝舌�繝ｬ繧､繧ｨ繝輔ぉ繧ｯ繝�
+   Miyabi オーバーレイエフェクト
    ========================================= */
 #miyabi-overlay {
     position: fixed;
@@ -1014,7 +1067,6 @@ header h1 {
     object-fit: contain;
     filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.5));
     animation: pulseMiyabi 2s infinite alternate;
-    /* 繧｢繝九Γ繝ｼ繧ｷ繝ｧ繝ｳ縺ｯ蜈ｱ騾壹〒OK */
 }
 
 /* Date Input improvements */
@@ -1031,34 +1083,39 @@ header h1 {
 }
 
 .quick-date-btn {
-    background: rgba(255, 255, 255, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    border-radius: 6px;
-    padding: 2px 8px;
+    background: rgba(139, 119, 101, 0.08);
+    border: 1px solid rgba(139, 119, 101, 0.2);
+    border-radius: var(--radius-sm);
+    padding: 3px 10px;
     font-size: 0.75rem;
     color: var(--text-muted);
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.25s ease;
     font-family: var(--font-body);
 }
 
 .quick-date-btn:hover {
     background: var(--primary);
-    color: white;
+    color: #f5f1e8;
     border-color: var(--primary);
     transform: translateY(-1px);
 }
 
 .quick-date-btn:active {
-    transform: scale(0.95);
+    transform: scale(0.97);
 }
 
 [data-theme="dark"] .quick-date-btn {
-    background: rgba(0, 0, 0, 0.3);
-    border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(201, 162, 39, 0.1);
+    border-color: rgba(201, 162, 39, 0.2);
 }
 
-/* 繝偵Φ繝医ユ繧ｭ繧ｹ繝� */
+[data-theme="dark"] .quick-date-btn:hover {
+    background: var(--primary);
+    color: #1a1a2e;
+}
+
+/* ヒントテキスト */
 .input-hint {
     font-size: 0.7rem;
     color: var(--text-muted);
@@ -1081,31 +1138,36 @@ header h1 {
 }
 
 .quick-priority-btn {
-    background: rgba(255, 255, 255, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    border-radius: 6px;
-    padding: 2px 8px;
+    background: rgba(139, 119, 101, 0.08);
+    border: 1px solid rgba(139, 119, 101, 0.2);
+    border-radius: var(--radius-sm);
+    padding: 3px 10px;
     font-size: 0.75rem;
     color: var(--text-muted);
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.25s ease;
     font-family: var(--font-body);
 }
 
 .quick-priority-btn:hover {
     background: var(--primary);
-    color: white;
+    color: #f5f1e8;
     border-color: var(--primary);
     transform: translateY(-1px);
 }
 
 .quick-priority-btn:active {
-    transform: scale(0.95);
+    transform: scale(0.97);
 }
 
 [data-theme="dark"] .quick-priority-btn {
-    background: rgba(0, 0, 0, 0.3);
-    border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(201, 162, 39, 0.1);
+    border-color: rgba(201, 162, 39, 0.2);
+}
+
+[data-theme="dark"] .quick-priority-btn:hover {
+    background: var(--primary);
+    color: #1a1a2e;
 }
 
 /* Repeat Input improvements */
@@ -1115,9 +1177,9 @@ header h1 {
 }
 
 #todo-repeat {
-    background: rgba(255, 255, 255, 0.5);
-    border: none;
-    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(139, 119, 101, 0.2);
+    border-radius: var(--radius-sm);
     padding: 0.8rem;
     font-size: 1rem;
     color: var(--text-main);
@@ -1128,7 +1190,8 @@ header h1 {
 }
 
 [data-theme="dark"] #todo-repeat {
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(26, 26, 46, 0.5);
+    border-color: rgba(201, 162, 39, 0.2);
     color: var(--text-main);
 }
 
@@ -1144,7 +1207,7 @@ header h1 {
     flex-wrap: wrap;
 }
 
-/* Ensure dropdowns don't take too much space in compact mode */
+/* コンパクトモードでのドロップダウン調整 */
 #todo-priority,
 #todo-repeat,
 #todo-date {
@@ -1157,31 +1220,36 @@ header h1 {
 }
 
 .quick-repeat-btn {
-    background: rgba(255, 255, 255, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    border-radius: 6px;
-    padding: 2px 8px;
+    background: rgba(139, 119, 101, 0.08);
+    border: 1px solid rgba(139, 119, 101, 0.2);
+    border-radius: var(--radius-sm);
+    padding: 3px 10px;
     font-size: 0.75rem;
     color: var(--text-muted);
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.25s ease;
     font-family: var(--font-body);
 }
 
 .quick-repeat-btn:hover {
     background: var(--primary);
-    color: white;
+    color: #f5f1e8;
     border-color: var(--primary);
     transform: translateY(-1px);
 }
 
 .quick-repeat-btn:active {
-    transform: scale(0.95);
+    transform: scale(0.97);
 }
 
 [data-theme="dark"] .quick-repeat-btn {
-    background: rgba(0, 0, 0, 0.3);
-    border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(201, 162, 39, 0.1);
+    border-color: rgba(201, 162, 39, 0.2);
+}
+
+[data-theme="dark"] .quick-repeat-btn:hover {
+    background: var(--primary);
+    color: #1a1a2e;
 }
 
 /* Edit Date Input Styling */
@@ -1193,7 +1261,6 @@ header h1 {
     font-size: 0.9rem;
     color: var(--text-main);
     background: white;
-    /* Default Light Mode */
 }
 
 [data-theme="dark"] .edit-date-input {
@@ -1201,10 +1268,9 @@ header h1 {
     color: white;
     border-color: #6366f1;
     color-scheme: dark;
-    /* Important for calendar popup */
 }
 
-/* Expired Task Highlighting */
+/* 期限切れタスクのハイライト */
 .reminder-badge.expired {
     color: var(--danger);
     font-weight: 700;
@@ -1227,7 +1293,7 @@ header h1 {
     }
 }
 
-/* Header Status Bar (Date & Work Time) */
+/* ヘッダーステータスバー（日付 & 活動時間） */
 .header-status-bar {
     display: flex;
     justify-content: space-between;
@@ -1239,7 +1305,6 @@ header h1 {
 
 #date-display {
     margin: 0;
-    /* 譌｢蟄倥・繧ｹ繧ｿ繧､繝ｫ縺後≠繧後・縺昴ｌ繧貞━蜈医√↑縺代ｌ縺ｰ隱ｿ謨ｴ */
     font-size: 0.95rem;
     opacity: 0.9;
 }
@@ -1276,14 +1341,14 @@ header h1 {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Dark mode adjustment if needed */
+/* ダークモード調整 */
 body.dark-mode .work-time-display {
     background: rgba(0, 0, 0, 0.2);
     border-color: rgba(255, 255, 255, 0.1);
 }
 
 /* ===========================
-   Task Complete Overlay
+   タスク完了オーバーレイ
    =========================== */
 #task-complete-overlay {
     position: fixed;
